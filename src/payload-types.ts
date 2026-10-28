@@ -170,6 +170,10 @@ export interface Project {
    */
   role?: string | null;
   technologies?: (string | Technology)[] | null;
+  /**
+   * Stack images next to "Build with." (390×72). Falls back to the technology logos.
+   */
+  buildWith?: (string | Media)[] | null;
   caseStudy?: {
     problem?: string | null;
     problemImage?: (string | null) | Media;
@@ -449,6 +453,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   teamSize?: T;
   role?: T;
   technologies?: T;
+  buildWith?: T;
   caseStudy?:
     | T
     | {
@@ -667,6 +672,9 @@ export interface Home {
         }[]
       | null;
     portrait?: (string | null) | Media;
+    /**
+     * Wrap text in **…** to make it bold
+     */
     intro?: string | null;
   };
   about?: {

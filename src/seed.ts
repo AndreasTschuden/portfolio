@@ -1,10 +1,13 @@
 /**
- * Seeds the portfolio with placeholder content (EN + DE).
+ * Seeds the portfolio with the content of the design handoff (EN + DE).
  * Idempotent: technologies are matched by name, projects by slug, experiences by
- * type + startYear + organisation, so running it again updates instead of duplicating.
+ * type + startYear, media by filename, so running it again updates instead of duplicating.
+ * Images are taken from design_handoff/assets when that folder exists.
  *
  * Run: pnpm seed
  */
+import fs from 'fs'
+import path from 'path'
 import { getPayload, type Payload } from 'payload'
 
 import config from './payload.config'
@@ -21,22 +24,31 @@ const withIds = <T extends object>(rows: T[], stored?: { id?: string | null }[] 
 // ── Technologies ────────────────────────────────────────────────────────────
 
 const technologies: Pick<Technology, 'name' | 'iconSlug' | 'category'>[] = [
-  { name: 'Angular', iconSlug: 'angular', category: 'frontend' },
+  { name: 'JavaScript', iconSlug: 'javascript', category: 'frontend' },
+  { name: 'TypeScript', iconSlug: 'typescript', category: 'frontend' },
+  { name: 'HTML5', iconSlug: 'html5', category: 'frontend' },
+  { name: 'CSS', iconSlug: 'css', category: 'frontend' },
   { name: 'React', iconSlug: 'react', category: 'frontend' },
   { name: 'Next.js', iconSlug: 'nextdotjs', category: 'frontend' },
-  { name: 'TypeScript', iconSlug: 'typescript', category: 'frontend' },
-  { name: 'CSS', iconSlug: 'css', category: 'frontend' },
-  { name: 'FastAPI', iconSlug: 'fastapi', category: 'backend' },
-  { name: 'NestJS', iconSlug: 'nestjs', category: 'backend' },
+  { name: 'Tailwind CSS', iconSlug: 'tailwindcss', category: 'frontend' },
+  { name: 'Angular', iconSlug: 'angular', category: 'frontend' },
   { name: 'Laravel', iconSlug: 'laravel', category: 'backend' },
   { name: 'PHP', iconSlug: 'php', category: 'backend' },
+  { name: 'NestJS', iconSlug: 'nestjs', category: 'backend' },
+  { name: 'FastAPI', iconSlug: 'fastapi', category: 'backend' },
   { name: 'Java', iconSlug: 'openjdk', category: 'backend' },
   { name: 'C#', iconSlug: 'dotnet', category: 'backend' },
-  { name: 'Payload CMS', iconSlug: 'payloadcms', category: 'backend' },
   { name: 'PostgreSQL', iconSlug: 'postgresql', category: 'database' },
   { name: 'MySQL', iconSlug: 'mysql', category: 'database' },
-  { name: 'SQL', iconSlug: 'sqlite', category: 'database' },
+  { name: 'MongoDB', iconSlug: 'mongodb', category: 'database' },
+  { name: 'MariaDB', iconSlug: 'mariadb', category: 'database' },
+  { name: 'Prisma', iconSlug: 'prisma', category: 'database' },
+  { name: 'Drizzle ORM', iconSlug: 'drizzle', category: 'database' },
+  { name: 'SQL', iconSlug: 'mysql', category: 'database' },
+  { name: 'Docker', iconSlug: 'docker', category: 'tools' },
   { name: 'Git', iconSlug: 'git', category: 'tools' },
+  { name: 'Vercel', iconSlug: 'vercel', category: 'tools' },
+  { name: 'Payload CMS', iconSlug: 'payloadcms', category: 'tools' },
 ]
 
 async function seedTechnologies(payload: Payload) {
@@ -58,6 +70,44 @@ async function seedTechnologies(payload: Payload) {
   return ids
 }
 
+// ── Media ───────────────────────────────────────────────────────────────────
+// The budgetly-laptop/phone assets are finished mockup renders, not raw screens, so the
+// "A look inside" screens stay empty until real screenshots are uploaded.
+
+const assetsDir = path.resolve(process.cwd(), 'design_handoff/assets')
+
+/** Uploads design_handoff/assets/<file> once; returns its id, or undefined if the file is missing. */
+async function seedMedia(payload: Payload, file: string, alt: L) {
+  const filePath = path.join(assetsDir, file)
+  if (!fs.existsSync(filePath)) return undefined
+
+  const { docs } = await payload.find({
+    collection: 'media',
+    where: { filename: { equals: file } },
+    limit: 1,
+  })
+  const doc =
+    docs[0] ??
+    (await payload.create({ collection: 'media', locale: 'en', data: { alt: alt.en }, filePath }))
+  await payload.update({ collection: 'media', id: doc.id, locale: 'de', data: { alt: alt.de } })
+  return doc.id
+}
+
+type SeedMedia = {
+  portrait?: string
+  stack?: string
+}
+
+async function seedAllMedia(payload: Payload): Promise<SeedMedia> {
+  return {
+    portrait: await seedMedia(payload, 'hero.png', {
+      en: 'Portrait of Andreas Tschuden',
+      de: 'Porträt von Andreas Tschuden',
+    }),
+    stack: await seedMedia(payload, 'budgetly-stack.png', { en: 'Tech stack', de: 'Tech-Stack' }),
+  }
+}
+
 // ── Projects ────────────────────────────────────────────────────────────────
 
 type ProjectSeed = Pick<Project, 'year' | 'type' | 'status' | 'teamSize' | 'featured'> & {
@@ -65,71 +115,81 @@ type ProjectSeed = Pick<Project, 'year' | 'type' | 'status' | 'teamSize' | 'feat
   role: L
   description: L
   caseStudy: { problem: L; solution: L; outcome: L }
-  screens: { label: L }[]
   stack: string[]
 }
 
-const placeholderProject = (n: number, stack: string[], year: string): ProjectSeed => ({
-  title: { en: `Project ${String(n).padStart(2, '0')}`, de: `Projekt ${String(n).padStart(2, '0')}` },
-  year,
-  type: n % 2 === 0 ? 'school' : 'personal',
-  status: 'done',
-  teamSize: n % 2 === 0 ? 3 : 1,
-  featured: n <= 3,
-  role: { en: 'Full-stack', de: 'Full-Stack' },
-  description: {
-    en: 'Placeholder description. A short summary of the project for cards and the intro.',
-    de: 'Platzhalter-Beschreibung. Eine kurze Zusammenfassung des Projekts für Karten und Intro.',
-  },
-  caseStudy: {
-    problem: { en: 'Placeholder: the problem.', de: 'Platzhalter: das Problem.' },
-    solution: { en: 'Placeholder: the solution.', de: 'Platzhalter: die Lösung.' },
-    outcome: { en: 'Placeholder: the outcome.', de: 'Platzhalter: das Ergebnis.' },
-  },
-  screens: [],
+const lorem: L = {
+  en: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+  de: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+}
+
+const placeholderDescription: L = {
+  en: 'Placeholder: short description of the problem and what you built.',
+  de: 'Platzhalter: kurze Beschreibung des Problems und was du gebaut hast.',
+}
+
+const project = (
+  title: L,
+  stack: string[],
+  meta: Pick<ProjectSeed, 'year' | 'type' | 'status' | 'teamSize'>,
+  role: L,
+  description = placeholderDescription,
+): ProjectSeed => ({
+  title,
+  ...meta,
+  featured: true,
+  role,
+  description,
+  caseStudy: { problem: lorem, solution: lorem, outcome: lorem },
   stack,
 })
 
 const projects: ProjectSeed[] = [
-  {
-    title: { en: 'Booking Portal', de: 'Buchungsportal' },
-    year: '2025',
-    type: 'work',
-    status: 'live',
-    teamSize: 1,
-    featured: true,
-    role: { en: 'Full-stack', de: 'Full-Stack' },
-    description: {
-      en: 'A booking portal that lets guests check availability and reserve in a few steps.',
-      de: 'Ein Buchungsportal, über das Gäste Verfügbarkeiten prüfen und in wenigen Schritten reservieren.',
+  project(
+    { en: 'Booking Portal', de: 'Buchungsportal' },
+    ['Angular', 'FastAPI', 'PostgreSQL'],
+    { year: '2025', type: 'school', status: 'live', teamSize: 4 },
+    { en: 'Full-stack', de: 'Full-Stack' },
+    {
+      en: 'Placeholder: online booking for appointments with an admin dashboard for managing slots and customers.',
+      de: 'Platzhalter: Online-Terminbuchung mit Admin-Dashboard zur Verwaltung von Zeitfenstern und Kund:innen.',
     },
-    caseStudy: {
-      problem: {
-        en: 'Bookings were handled by phone and email, which was slow and error-prone.',
-        de: 'Buchungen liefen über Telefon und E-Mail – langsam und fehleranfällig.',
-      },
-      solution: {
-        en: 'A web app with live availability, an admin dashboard and automatic confirmations.',
-        de: 'Eine Web-App mit Live-Verfügbarkeit, Admin-Dashboard und automatischen Bestätigungen.',
-      },
-      outcome: {
-        en: 'Fewer manual requests and a clear overview of all bookings.',
-        de: 'Weniger manuelle Anfragen und ein klarer Überblick über alle Buchungen.',
-      },
-    },
-    screens: [
-      { label: { en: 'Booking flow', de: 'Buchungsablauf' } },
-      { label: { en: 'Admin dashboard', de: 'Admin-Dashboard' } },
-    ],
-    stack: ['Next.js', 'TypeScript', 'Payload CMS', 'PostgreSQL'],
-  },
-  placeholderProject(2, ['Angular', 'NestJS', 'PostgreSQL'], '2025'),
-  placeholderProject(3, ['React', 'FastAPI', 'PostgreSQL'], '2024'),
-  placeholderProject(4, ['Laravel', 'PHP', 'MySQL'], '2024'),
-  placeholderProject(5, ['Java', 'SQL'], '2023'),
+  ),
+  project(
+    { en: 'Project 02', de: 'Projekt 02' },
+    ['Next.js', 'Laravel', 'MySQL'],
+    { year: '2025', type: 'work', status: 'done', teamSize: 3 },
+    { en: 'Front-end', de: 'Frontend' },
+  ),
+  project(
+    { en: 'Project 03', de: 'Projekt 03' },
+    ['React', 'NestJS'],
+    { year: '2024', type: 'school', status: 'done', teamSize: 2 },
+    { en: 'Back-end', de: 'Backend' },
+  ),
+  project(
+    { en: 'Project 04', de: 'Projekt 04' },
+    ['Next.js', 'Payload CMS'],
+    { year: '2024', type: 'personal', status: 'wip', teamSize: 1 },
+    { en: 'Design & Dev', de: 'Design & Dev' },
+  ),
+  project(
+    { en: 'Project 05', de: 'Projekt 05' },
+    ['Laravel', 'MySQL'],
+    { year: '2023', type: 'school', status: 'done', teamSize: 3 },
+    { en: 'Full-stack', de: 'Full-Stack' },
+  ),
 ]
 
-async function seedProjects(payload: Payload, techIds: Record<string, string>) {
+const screenLabels: L[] = [
+  { en: 'Login', de: 'Login' },
+  { en: 'Dashboard', de: 'Dashboard' },
+  { en: 'Booking flow', de: 'Buchungsablauf' },
+  { en: 'Calendar', de: 'Kalender' },
+  { en: 'Settings', de: 'Einstellungen' },
+]
+
+async function seedProjects(payload: Payload, techIds: Record<string, string>, media: SeedMedia) {
   for (const [order, p] of projects.entries()) {
     const slug = slugify(p.title.en)
     const localized = (locale: Locale) => ({
@@ -159,7 +219,8 @@ async function seedProjects(payload: Payload, techIds: Record<string, string>) {
       status: p.status,
       teamSize: p.teamSize,
       technologies: p.stack.map((name) => techIds[name]),
-      screens: p.screens.map((s) => ({ label: s.label.en })),
+      buildWith: media.stack ? [media.stack, media.stack] : [],
+      screens: screenLabels.map((label) => ({ label: label.en, desktop: null, mobile: null })),
     }
     const doc = docs[0]
       ? await payload.update({ collection: 'projects', id: docs[0].id, locale: 'en', data: en })
@@ -172,7 +233,7 @@ async function seedProjects(payload: Payload, techIds: Record<string, string>) {
       data: {
         ...localized('de'),
         screens: withIds(
-          p.screens.map((s) => ({ label: s.label.de })),
+          screenLabels.map((label) => ({ label: label.de })),
           doc.screens,
         ),
       },
@@ -198,70 +259,114 @@ const experiences: ExperienceSeed[] = [
     startYear: '2025',
     endYear: '2025',
     months: { en: 'Jul – Aug', de: 'Jul – Aug' },
-    role: { en: 'Software Development Intern', de: 'Praktikant Softwareentwicklung' },
-    organisation: { en: 'Company (placeholder)', de: 'Firma (Platzhalter)' },
-    place: { en: 'Villach, Austria', de: 'Villach, Österreich' },
+    role: { en: 'Web Development Intern', de: 'Praktikant Webentwicklung' },
+    organisation: { en: 'Company name', de: 'Firmenname' },
+    place: { en: 'City', de: 'Ort' },
     description: {
-      en: 'Placeholder: worked on a full-stack web application in a small team.',
-      de: 'Platzhalter: Mitarbeit an einer Full-Stack-Webanwendung in einem kleinen Team.',
+      en: 'Summer internship in a product team, working on the customer-facing web app and its Laravel API.',
+      de: 'Sommerpraktikum in einem Produktteam, Mitarbeit an der Web-App für Kund:innen und der zugehörigen Laravel-API.',
     },
     learned: [
       {
         kind: 'tech',
-        title: { en: 'Production code', de: 'Produktivcode' },
+        title: { en: 'Designing REST APIs', de: 'REST-APIs entwerfen' },
         text: {
-          en: 'Shipping features in an existing codebase.',
-          de: 'Features in einer bestehenden Codebasis ausliefern.',
+          en: 'Structuring endpoints, validation and migrations so the front-end can rely on them.',
+          de: 'Endpunkte, Validierung und Migrationen so aufbauen, dass sich das Frontend darauf verlassen kann.',
         },
       },
       {
         kind: 'process',
-        title: { en: 'Code reviews', de: 'Code Reviews' },
+        title: { en: 'Working in sprints', de: 'Arbeiten in Sprints' },
         text: {
-          en: 'Working with pull requests and feedback.',
-          de: 'Arbeiten mit Pull Requests und Feedback.',
+          en: 'Estimating tickets, daily stand-ups and shipping in small, reviewable steps.',
+          de: 'Tickets schätzen, Daily Stand-ups und in kleinen, prüfbaren Schritten liefern.',
+        },
+      },
+      {
+        kind: 'soft',
+        title: { en: 'Asking the right questions', de: 'Die richtigen Fragen stellen' },
+        text: {
+          en: 'Clarifying requirements early instead of guessing and rebuilding later.',
+          de: 'Anforderungen früh klären, statt zu raten und später neu zu bauen.',
         },
       },
     ],
-    stack: ['Next.js', 'TypeScript', 'Git'],
+    stack: ['Laravel', 'PHP', 'MySQL', 'Git'],
   },
   {
     type: 'work',
     startYear: '2024',
     endYear: '2024',
     months: { en: 'Jul – Aug', de: 'Jul – Aug' },
-    role: { en: 'Web Development Intern', de: 'Praktikant Webentwicklung' },
-    organisation: { en: 'Company (placeholder)', de: 'Firma (Platzhalter)' },
-    place: { en: 'Carinthia, Austria', de: 'Kärnten, Österreich' },
+    role: { en: 'Front-end Intern', de: 'Praktikant Frontend' },
+    organisation: { en: 'Company name', de: 'Firmenname' },
+    place: { en: 'City', de: 'Ort' },
     description: {
-      en: 'Placeholder: built and maintained websites and internal tools.',
-      de: 'Platzhalter: Websites und interne Tools gebaut und gewartet.',
+      en: 'First professional internship, translating designs into responsive, accessible interfaces.',
+      de: 'Erstes Praktikum, Designs in responsive und barrierearme Oberflächen übersetzt.',
     },
     learned: [
       {
-        kind: 'soft',
-        title: { en: 'Communication', de: 'Kommunikation' },
+        kind: 'tech',
+        title: { en: 'Component thinking', de: 'In Komponenten denken' },
         text: {
-          en: 'Clarifying requirements directly with the team.',
-          de: 'Anforderungen direkt mit dem Team abklären.',
+          en: 'Breaking Figma designs into reusable React components with clear props.',
+          de: 'Figma-Designs in wiederverwendbare React-Komponenten mit klaren Props zerlegen.',
+        },
+      },
+      {
+        kind: 'process',
+        title: { en: 'Code reviews', de: 'Code-Reviews' },
+        text: {
+          en: 'Giving and receiving feedback on pull requests and keeping commits readable.',
+          de: 'Feedback zu Pull Requests geben und annehmen, Commits nachvollziehbar halten.',
         },
       },
     ],
-    stack: ['Laravel', 'PHP', 'MySQL'],
+    stack: ['React', 'TypeScript', 'CSS'],
   },
   {
     type: 'edu',
     startYear: '2022',
     endYear: '2027',
-    role: { en: 'Information Technology', de: 'Informationstechnologie' },
-    organisation: { en: 'HTBLuVA Villach', de: 'HTBLuVA Villach' },
-    place: { en: 'Villach, Austria', de: 'Villach, Österreich' },
-    description: {
-      en: 'Advanced Web Development · Diploma underway.',
-      de: 'Advanced Web Development · Diplom in Arbeit.',
+    role: {
+      en: 'IT, specialising in advanced web development',
+      de: 'Informationstechnologie, Schwerpunkt Webentwicklung',
     },
-    learned: [],
-    stack: ['Java', 'C#', 'SQL', 'Angular'],
+    organisation: { en: 'HTBLuVA Villach', de: 'HTBLuVA Villach' },
+    place: { en: 'Villach', de: 'Villach' },
+    description: {
+      en: 'Currently in my fourth year. Software engineering, databases, networks and project management, with a focus on modern web development.',
+      de: 'Derzeit im vierten Jahrgang. Softwareentwicklung, Datenbanken, Netzwerktechnik und Projektmanagement mit Fokus auf moderne Webentwicklung.',
+    },
+    learned: [
+      {
+        kind: 'tech',
+        title: { en: 'Software fundamentals', de: 'Software-Grundlagen' },
+        text: {
+          en: 'Object-oriented programming, data structures and relational databases.',
+          de: 'Objektorientierte Programmierung, Datenstrukturen und relationale Datenbanken.',
+        },
+      },
+      {
+        kind: 'process',
+        title: { en: 'Project management', de: 'Projektmanagement' },
+        text: {
+          en: 'Planning team projects with real clients, from requirements to delivery.',
+          de: 'Teamprojekte mit echten Auftraggebern planen, von den Anforderungen bis zur Abgabe.',
+        },
+      },
+      {
+        kind: 'soft',
+        title: { en: 'Teamwork', de: 'Teamarbeit' },
+        text: {
+          en: 'Splitting work, presenting results and owning my part of a shared codebase.',
+          de: 'Aufgaben aufteilen, Ergebnisse präsentieren und meinen Teil einer gemeinsamen Codebasis verantworten.',
+        },
+      },
+    ],
+    stack: ['Java', 'C#', 'SQL', 'Laravel', 'Next.js'],
   },
 ]
 
@@ -283,7 +388,6 @@ async function seedExperiences(payload: Payload, techIds: Record<string, string>
       where: {
         type: { equals: e.type },
         startYear: { equals: e.startYear },
-        organisation: { equals: e.organisation.en },
       },
       limit: 1,
     })
@@ -312,65 +416,75 @@ async function seedExperiences(payload: Payload, techIds: Record<string, string>
 
 // ── Globals ─────────────────────────────────────────────────────────────────
 
-async function seedHome(payload: Payload, techIds: Record<string, string>) {
+async function seedHome(payload: Payload, techIds: Record<string, string>, media: SeedMedia) {
+  const role: L = { en: 'UI/UX Designer & Web Developer', de: 'UI/UX-Designer & Webentwickler' }
+  // **…** is rendered bold
+  const intro: L = {
+    en: '― I’m **Tschuden Andreas** a UI/UX Designer & Web Developer',
+    de: '― Ich bin **Tschuden Andreas**, UI/UX-Designer & Webentwickler',
+  }
   const stats = [
-    { value: 4, label: { en: 'Years of coding', de: 'Jahre Programmieren' } },
-    { value: 5, label: { en: 'Projects', de: 'Projekte' } },
-    { value: 2, label: { en: 'Internships', de: 'Praktika' } },
+    { value: 5, label: { en: 'Projects completed', de: 'Abgeschlossene Projekte' } },
+    { value: 25, label: { en: 'Technologies learned', de: 'Erlernte Technologien' } },
   ]
-  const paragraphs = [
+  const p2: L = {
+    en: 'Currently in my fourth year at HTBLuVA Villach, specialising in advanced web development. I move easily between Laravel back‑ends, Next.js front‑ends, and the design layer that ties them together.',
+    de: 'Derzeit bin ich im vierten Jahrgang an der HTBLuVA Villach mit Schwerpunkt auf fortgeschrittener Webentwicklung. Ich bewege mich sicher zwischen Laravel-Backends, Next.js-Frontends und der Designebene, die beides verbindet.',
+  }
+  const paragraphs: L[] = [
     {
-      en: 'Placeholder: who I am and what I care about when building for the web.',
-      de: 'Platzhalter: wer ich bin und worauf ich beim Entwickeln fürs Web achte.',
+      en: "I'm a fullstack developer in training, based in Villach, with three years already spent learning the trade end‑to‑end.",
+      de: 'Ich bin Fullstack-Entwickler in Ausbildung aus Villach und lerne das Handwerk seit drei Jahren von Grund auf.',
     },
+    p2,
     {
-      en: 'Placeholder: what I am currently learning and working on.',
-      de: 'Platzhalter: was ich gerade lerne und woran ich arbeite.',
+      en: 'Currently in my fourth year at HTBLuVA Villach, specialising in advanced web development. I move easily betw‑ends, Next.js front‑ends, and the design layer that ties them together.',
+      de: 'Derzeit bin ich im vierten Jahrgang an der HTBLuVA Villach mit Schwerpunkt auf fortgeschrittener Webentwicklung. Ich bewege mich sicher zwischen Backends, Next.js-Frontends und der Designebene, die beides verbindet.',
     },
   ]
+  const serviceText: L = {
+    en: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
+    de: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
+  }
   const services = [
-    {
-      title: { en: 'Web Apps', de: 'Web-Apps' },
-      text: { en: 'Full-stack applications from idea to deployment.', de: 'Full-Stack-Anwendungen von der Idee bis zum Deployment.' },
-    },
-    {
-      title: { en: 'Websites', de: 'Websites' },
-      text: { en: 'Fast, responsive sites with a CMS.', de: 'Schnelle, responsive Websites mit CMS.' },
-    },
-    {
-      title: { en: 'APIs', de: 'APIs' },
-      text: { en: 'Clean REST APIs and database design.', de: 'Saubere REST-APIs und Datenbankdesign.' },
-    },
-    {
-      title: { en: 'UI Design', de: 'UI-Design' },
-      text: { en: 'Interfaces that are clear and easy to use.', de: 'Oberflächen, die klar und einfach zu bedienen sind.' },
-    },
+    { title: { en: 'Web Development', de: 'Webentwicklung' }, text: serviceText },
+    { title: { en: 'UI/UX Design', de: 'UI/UX Design' }, text: serviceText },
+    { title: { en: 'Responsive Design', de: 'Responsive Design' }, text: serviceText },
+    { title: { en: 'Performance', de: 'Performance' }, text: serviceText },
   ]
   const stackGroups = [
-    { label: { en: 'Frontend', de: 'Frontend' }, category: 'frontend' },
-    { label: { en: 'Backend', de: 'Backend' }, category: 'backend' },
-    { label: { en: 'Database', de: 'Datenbank' }, category: 'database' },
-    { label: { en: 'Tools', de: 'Tools' }, category: 'tools' },
+    {
+      label: { en: 'Frontend', de: 'Frontend' },
+      techs: ['JavaScript', 'TypeScript', 'HTML5', 'CSS', 'React', 'Next.js', 'Tailwind CSS'],
+    },
+    { label: { en: 'Backend', de: 'Backend' }, techs: ['Laravel', 'PHP', 'NestJS'] },
+    {
+      label: { en: 'Database', de: 'Datenbank' },
+      techs: ['PostgreSQL', 'MySQL', 'MongoDB', 'MariaDB', 'Prisma', 'Drizzle ORM'],
+    },
+    {
+      label: { en: 'Tools & Deploy', de: 'Tools & Deploy' },
+      techs: ['Docker', 'Git', 'Vercel', 'Payload CMS'],
+    },
   ]
-  const techIdsByCategory = (category: string) =>
-    technologies.filter((t) => t.category === category).map((t) => techIds[t.name])
 
   const en = await payload.updateGlobal({
     slug: 'home',
     locale: 'en',
     data: {
       hero: {
-        role: 'Full-stack Developer',
-        intro: 'Placeholder intro: I build web applications with a focus on clean code and good UX.',
+        role: role.en,
+        intro: intro.en,
+        portrait: media.portrait,
         stats: stats.map((s) => ({ value: s.value, label: s.label.en })),
       },
       about: { paragraphs: paragraphs.map((p) => ({ text: p.en })) },
       services: services.map((s) => ({ title: s.title.en, text: s.text.en })),
       stackGroups: stackGroups.map((g) => ({
         label: g.label.en,
-        technologies: techIdsByCategory(g.category),
+        technologies: g.techs.map((name) => techIds[name]),
       })),
-      projectsIntro: 'Placeholder: a selection of school, work and personal projects.',
+      projectsIntro: p2.en,
     },
   })
 
@@ -379,9 +493,8 @@ async function seedHome(payload: Payload, techIds: Record<string, string>) {
     locale: 'de',
     data: {
       hero: {
-        role: 'Full-Stack-Entwickler',
-        intro:
-          'Platzhalter-Intro: Ich entwickle Webanwendungen mit Fokus auf sauberen Code und gute UX.',
+        role: role.de,
+        intro: intro.de,
         stats: withIds(
           stats.map((s) => ({ value: s.value, label: s.label.de })),
           en.hero?.stats,
@@ -400,19 +513,20 @@ async function seedHome(payload: Payload, techIds: Record<string, string>) {
       stackGroups: withIds(
         stackGroups.map((g) => ({
           label: g.label.de,
-          technologies: techIdsByCategory(g.category),
+          technologies: g.techs.map((name) => techIds[name]),
         })),
         en.stackGroups,
       ),
-      projectsIntro: 'Platzhalter: eine Auswahl an Schul-, Arbeits- und privaten Projekten.',
+      projectsIntro: p2.de,
     },
   })
 }
 
 async function seedSiteSettings(payload: Payload) {
   const headline = [
-    { en: "Let's build", de: 'Lass uns' },
-    { en: 'something together.', de: 'gemeinsam etwas bauen.' },
+    { en: 'Want to', de: 'Lust auf' },
+    { en: 'talk to me?', de: 'ein Gespräch?' },
+    { en: 'Get in touch.', de: 'Melde dich.' },
   ]
 
   const en = await payload.updateGlobal({
@@ -420,13 +534,14 @@ async function seedSiteSettings(payload: Payload) {
     locale: 'en',
     data: {
       name: 'Andreas Tschuden',
-      phone: '+43 000 0000000',
-      email: 'hello@example.com',
+      phone: '+43 680 1201010',
+      email: 'atschuden62@gmail.com',
       contactHeadline: headline.map((h) => ({ line: h.en })),
-      contactFormNote: 'I usually reply within two working days.',
+      contactFormNote: 'I aim to reply within 1 business day.',
       seo: {
-        title: 'Andreas Tschuden · Full-stack Developer',
-        description: 'Portfolio of Andreas Tschuden, full-stack developer from Villach, Austria.',
+        title: 'Andreas Tschuden · UI/UX Designer & Web Developer',
+        description:
+          'Portfolio of Andreas Tschuden, UI/UX designer and web developer from Villach, Austria.',
       },
     },
   })
@@ -439,10 +554,11 @@ async function seedSiteSettings(payload: Payload) {
         headline.map((h) => ({ line: h.de })),
         en.contactHeadline,
       ),
-      contactFormNote: 'Ich antworte normalerweise innerhalb von zwei Werktagen.',
+      contactFormNote: 'Ich antworte innerhalb von 1 Werktag.',
       seo: {
-        title: 'Andreas Tschuden · Full-Stack-Entwickler',
-        description: 'Portfolio von Andreas Tschuden, Full-Stack-Entwickler aus Villach, Österreich.',
+        title: 'Andreas Tschuden · UI/UX-Designer & Webentwickler',
+        description:
+          'Portfolio von Andreas Tschuden, UI/UX-Designer und Webentwickler aus Villach, Österreich.',
       },
     },
   })
@@ -455,11 +571,13 @@ const payload = await getPayload({ config })
 try {
   const techIds = await seedTechnologies(payload)
   payload.logger.info(`Seeded ${Object.keys(techIds).length} technologies`)
-  await seedProjects(payload, techIds)
+  const media = await seedAllMedia(payload)
+  payload.logger.info(`Seeded ${Object.values(media).filter(Boolean).length} media files`)
+  await seedProjects(payload, techIds, media)
   payload.logger.info(`Seeded ${projects.length} projects`)
   await seedExperiences(payload, techIds)
   payload.logger.info(`Seeded ${experiences.length} experiences`)
-  await seedHome(payload, techIds)
+  await seedHome(payload, techIds, media)
   await seedSiteSettings(payload)
   payload.logger.info('Seeded globals: home, site-settings')
 } catch (err) {

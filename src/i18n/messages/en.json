@@ -1,0 +1,66 @@
+{
+  "nav": {
+    "about": "About Me",
+    "projects": "Projects",
+    "allProjects": "All Projects",
+    "experience": "Experience",
+    "touch": "Get in Touch",
+    "langLabel": "Auf Deutsch wechseln",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "home": "Home"
+  },
+  "home": {
+    "hello": "Hello",
+    "scrollDown": "Scroll down",
+    "about": "About Me",
+    "cv": "Download CV",
+    "stack": "What I work with",
+    "projects": "Projects",
+    "seeMore": "See More",
+    "scroll": "Scroll",
+    "allProjects": "Go to all Projects",
+    "phone": "Reach me by phone:",
+    "other": "For all other enquiries:",
+    "formIntro": "Please fill in the form below.",
+    "firstName": "First Name*",
+    "lastName": "Last Name*",
+    "email": "Your E-mail*",
+    "message": "Your message",
+    "submit": "Submit message",
+    "sending": "Sending…",
+    "sent": "Message sent",
+    "error": "Try again"
+  },
+  "projects": {
+    "title": "All Projects",
+    "year": "Year",
+    "role": "Role",
+    "team": "Team",
+    "solo": "Solo",
+    "people": "people",
+    "nextLabel": "Where I learned it",
+    "next": "Experience"
+  },
+  "project": {
+    "build": "Build with.",
+    "cases": ["Problem", "Solution", "Outcome"],
+    "look": "A look inside.",
+    "prev": "Previous screen",
+    "next": "Next screen",
+    "nextProject": "Next Project",
+    "desktopAlt": "Desktop screenshot",
+    "mobileAlt": "Mobile screenshot"
+  },
+  "experience": {
+    "title": "Experience",
+    "intro": "Internships and school. Every station taught me something about building products end‑to‑end, from the first wireframe to the deployed back‑end.",
+    "learned": "What I learned",
+    "tools": "New tools",
+    "kinds": { "tech": "Technical", "soft": "Soft skill", "process": "Workflow" },
+    "types": { "work": "Work", "edu": "Education" },
+    "now": "Today",
+    "nextLabel": "See what came out of it",
+    "next": "Projects"
+  }
+}

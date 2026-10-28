@@ -31,7 +31,12 @@ export const Home: GlobalConfig = {
               ],
             },
             { name: 'portrait', type: 'upload', relationTo: 'media' },
-            { name: 'intro', type: 'textarea', localized: true },
+            {
+              name: 'intro',
+              type: 'textarea',
+              localized: true,
+              admin: { description: 'Wrap text in **…** to make it bold' },
+            },
           ],
         },
         {

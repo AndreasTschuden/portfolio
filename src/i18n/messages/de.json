@@ -1,0 +1,66 @@
+{
+  "nav": {
+    "about": "Über mich",
+    "projects": "Projekte",
+    "allProjects": "Alle Projekte",
+    "experience": "Erfahrung",
+    "touch": "Kontakt",
+    "langLabel": "Switch to English",
+    "menuOpen": "Menü öffnen",
+    "menuClose": "Menü schließen",
+    "home": "Startseite"
+  },
+  "home": {
+    "hello": "Hallo",
+    "scrollDown": "Nach unten scrollen",
+    "about": "Über mich",
+    "cv": "Lebenslauf herunterladen",
+    "stack": "Womit ich arbeite",
+    "projects": "Projekte",
+    "seeMore": "Mehr ansehen",
+    "scroll": "Scrollen",
+    "allProjects": "Alle Projekte ansehen",
+    "phone": "Telefonisch erreichbar:",
+    "other": "Für alle anderen Anfragen:",
+    "formIntro": "Bitte fülle das Formular aus.",
+    "firstName": "Vorname*",
+    "lastName": "Nachname*",
+    "email": "Deine E-Mail*",
+    "message": "Deine Nachricht",
+    "submit": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "sent": "Nachricht gesendet",
+    "error": "Erneut versuchen"
+  },
+  "projects": {
+    "title": "Alle Projekte.",
+    "year": "Jahr",
+    "role": "Rolle",
+    "team": "Team",
+    "solo": "Solo",
+    "people": "Personen",
+    "nextLabel": "Wo ich es gelernt habe",
+    "next": "Erfahrung"
+  },
+  "project": {
+    "build": "Gebaut mit.",
+    "cases": ["Problem", "Lösung", "Ergebnis"],
+    "look": "Ein Blick hinein.",
+    "prev": "Vorheriger Screen",
+    "next": "Nächster Screen",
+    "nextProject": "Nächstes Projekt",
+    "desktopAlt": "Desktop-Screenshot",
+    "mobileAlt": "Mobile-Screenshot"
+  },
+  "experience": {
+    "title": "Erfahrung.",
+    "intro": "Praktika und Schule. Jede Station hat mir etwas darüber beigebracht, Produkte durchgängig zu bauen, vom ersten Wireframe bis zum deployten Backend.",
+    "learned": "Was ich gelernt habe",
+    "tools": "Neue Werkzeuge",
+    "kinds": { "tech": "Technik", "soft": "Soft Skill", "process": "Arbeitsweise" },
+    "types": { "work": "Arbeit", "edu": "Ausbildung" },
+    "now": "Heute",
+    "nextLabel": "Was dabei entstanden ist",
+    "next": "Projekte"
+  }
+}

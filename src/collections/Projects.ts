@@ -91,6 +91,18 @@ export const Projects: CollectionConfig = {
       relationTo: 'technologies',
       hasMany: true,
     },
+    {
+      name: 'buildWith',
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
+      maxRows: 2,
+      label: 'Build with (images)',
+      admin: {
+        description:
+          'Stack images next to "Build with." (390×72). Falls back to the technology logos.',
+      },
+    },
 
     // ── Case study ──────────────────────────────────────────
     {
