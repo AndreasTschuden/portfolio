@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+/* Design tokens from design_handoff/README.md. Everything else is Tailwind utilities. */
+@theme {
+  --font-sans: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, Menlo, monospace;
+
+  --color-navy: rgb(17 42 70);
+  --color-secondary: rgb(52 80 109);
+  --color-mist: rgb(225 232 240);
+  --color-ice: rgb(197 215 236);
+  --color-haze: rgb(196 210 225);
+  --color-steel: rgb(122 140 166);
+  --color-ash: rgb(128 128 128);
+  --color-line: rgb(229 231 235);
+  --color-device: rgb(17 24 39);
+  --color-bezel: rgb(52 60 75);
+
+  --ease-soft: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-swift: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-rail: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-wipe: cubic-bezier(0.65, 0.05, 0.2, 1);
+
+  --spacing-gutter: clamp(24px, 5vw, 96px);
+  --spacing-inset: clamp(0px, 2.08vw, 30px);
+
+  --text-hello: clamp(72px, min(13.9vw, 22vh), 200px);
+  --text-h1: clamp(64px, 6.95vw, 100px);
+  --text-h2: clamp(40px, 4.2vw, 60px);
+  --text-teaser: clamp(56px, 5.55vw, 80px);
+  --text-title: clamp(30px, 2.5vw, 36px);
+  --text-footer: clamp(36px, 10.4vw, 150px);
+}

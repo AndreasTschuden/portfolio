@@ -12,8 +12,12 @@ const nextConfig: NextConfig = {
       {
         pathname: '/api/media/file/**',
       },
+      // Portrait fallback when home.hero.portrait is empty
+      { pathname: '/hero.png' },
     ],
   },
+  // The site lives under /[locale]; / goes to the default locale.
+  redirects: async () => [{ source: '/', destination: '/en', permanent: false }],
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

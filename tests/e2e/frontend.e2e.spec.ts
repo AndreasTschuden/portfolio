@@ -1,20 +1,19 @@
-import { test, expect, Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Frontend', () => {
-  let page: Page
-
-  test.beforeAll(async ({ browser }, testInfo) => {
-    const context = await browser.newContext()
-    page = await context.newPage()
-  })
-
-  test('can go on homepage', async ({ page }) => {
+  test('redirects / to the English home page', async ({ page }) => {
     await page.goto('http://localhost:3000')
 
-    await expect(page).toHaveTitle(/Payload Blank Template/)
+    await expect(page).toHaveURL(/\/en$/)
+    await expect(page.locator('h1').first()).toHaveAttribute('aria-label', 'Hello')
+  })
 
-    const heading = page.locator('h1').first()
+  test('language toggle switches the route', async ({ page }) => {
+    await page.goto('http://localhost:3000/en/projects')
 
-    await expect(heading).toHaveText('Welcome to your new project.')
+    await page.getByRole('button', { name: 'Auf Deutsch wechseln' }).click()
+
+    await expect(page).toHaveURL(/\/de\/projects$/)
+    await expect(page.locator('h1')).toHaveText('Alle Projekte.')
   })
 })
