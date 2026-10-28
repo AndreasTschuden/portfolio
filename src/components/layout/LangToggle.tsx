@@ -16,7 +16,8 @@ export function LangToggle({ locale, label }: { locale: Locale; label: string })
     const next: Locale = shown === 'en' ? 'de' : 'en'
     setShown(next)
     startTransition(() =>
-      router.push(switchLocalePath(pathname, next) + window.location.hash, { scroll: false }),
+      // replace: switching the language is not a step "Back" should undo
+      router.replace(switchLocalePath(pathname, next) + window.location.hash, { scroll: false }),
     )
   }
 

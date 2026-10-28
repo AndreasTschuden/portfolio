@@ -28,11 +28,7 @@ export default async function ProjectsPage({ params }: PageProps<'/[locale]/proj
 
   return (
     <div>
-      <Header
-        locale={locale}
-        t={m.nav}
-        back={{ href: `${base}#projects`, label: m.nav.projects }}
-      />
+      <Header locale={locale} t={m.nav} back={{ fallbackHref: `${base}#projects` }} />
 
       <section className="px-gutter pt-[140px] md:pt-[190px]">
         <div className="flex flex-wrap items-end justify-between gap-x-20 gap-y-6 pl-inset">

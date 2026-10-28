@@ -47,7 +47,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
 
   return (
     <div>
-      <Header locale={locale} t={m.nav} back={{ href: `${base}#about`, label: m.nav.about }} />
+      <Header locale={locale} t={m.nav} back={{ fallbackHref: `${base}#about` }} />
       <ExperienceView entries={entries} t={t} />
       <section className="px-gutter pt-[60px]">
         <NextTeaser href={`${base}#projects`} label={t.nextLabel} title={t.next} />

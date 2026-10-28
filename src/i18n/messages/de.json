@@ -2,12 +2,12 @@
   "nav": {
     "about": "Über mich",
     "projects": "Projekte",
-    "allProjects": "Alle Projekte",
     "experience": "Erfahrung",
     "touch": "Kontakt",
     "langLabel": "Switch to English",
     "menuOpen": "Menü öffnen",
     "menuClose": "Menü schließen",
+    "back": "Zurück",
     "home": "Startseite"
   },
   "home": {

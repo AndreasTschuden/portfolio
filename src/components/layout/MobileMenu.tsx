@@ -12,14 +12,19 @@ import { LangToggle } from './LangToggle'
 export const MENU_ID = 'mobile-menu'
 
 /** Two lines that turn into an ×. Only shown below md. */
+/** Breakpoint from which the inline nav replaces the burger menu. */
+export type Desktop = 'md' | 'lg'
+
 export function MenuButton({
   open,
   onToggle,
   t,
+  desktop,
 }: {
   open: boolean
   onToggle: () => void
   t: Messages['nav']
+  desktop: Desktop
 }) {
   const line =
     'absolute top-1/2 left-1/2 -mt-[0.75px] -ml-3 h-[1.5px] w-6 rounded-full bg-navy transition-transform duration-450 ease-soft'
@@ -31,7 +36,7 @@ export function MenuButton({
       aria-expanded={open}
       aria-controls={MENU_ID}
       aria-label={open ? t.menuClose : t.menuOpen}
-      className="relative ml-auto size-10 flex-none cursor-pointer rounded-full border-0 bg-transparent md:hidden"
+      className={`relative ml-auto size-10 flex-none cursor-pointer rounded-full border-0 bg-transparent ${desktop === 'lg' ? 'lg:hidden' : 'md:hidden'}`}
     >
       <span className={`${line} ${open ? 'translate-y-0 rotate-45' : '-translate-y-1'}`} />
       <span className={`${line} ${open ? 'translate-y-0 -rotate-45' : 'translate-y-1'}`} />
@@ -40,6 +45,7 @@ export function MenuButton({
 }
 
 type Props = {
+  desktop: Desktop
   open: boolean
   onClose: () => void
   locale: Locale
@@ -47,7 +53,7 @@ type Props = {
 }
 
 /** Full-screen menu that wipes down from the top, links rise out of a mask. */
-export function MobileMenu({ open, onClose, locale, t }: Props) {
+export function MobileMenu({ open, onClose, locale, t, desktop }: Props) {
   const home = `/${locale}`
   const links = [
     { href: `${home}#about`, label: t.about },
@@ -61,23 +67,23 @@ export function MobileMenu({ open, onClose, locale, t }: Props) {
     const html = document.documentElement
     html.style.overflow = 'hidden'
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    const desktop = window.matchMedia('(min-width: 48rem)')
-    const onResize = () => desktop.matches && onClose()
+    const wide = window.matchMedia(desktop === 'lg' ? '(min-width: 64rem)' : '(min-width: 48rem)')
+    const onResize = () => wide.matches && onClose()
     window.addEventListener('keydown', onKey)
-    desktop.addEventListener('change', onResize)
+    wide.addEventListener('change', onResize)
     return () => {
       html.style.overflow = ''
       window.removeEventListener('keydown', onKey)
-      desktop.removeEventListener('change', onResize)
+      wide.removeEventListener('change', onResize)
     }
-  }, [open, onClose])
+  }, [open, onClose, desktop])
 
   return (
     <div
       id={MENU_ID}
       inert={!open}
       aria-hidden={!open}
-      className={`fixed inset-0 z-40 flex flex-col bg-white px-gutter pt-[130px] pb-10 transition-[clip-path] duration-650 ease-swift md:hidden ${
+      className={`fixed inset-0 z-40 flex flex-col bg-white px-gutter pt-[130px] pb-10 transition-[clip-path] duration-650 ease-swift ${desktop === 'lg' ? 'lg:hidden' : 'md:hidden'} ${
         open ? '[clip-path:inset(0_0_0_0)]' : '[clip-path:inset(0_0_100%_0)]'
       }`}
     >

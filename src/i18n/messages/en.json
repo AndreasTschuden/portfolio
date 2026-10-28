@@ -2,12 +2,12 @@
   "nav": {
     "about": "About Me",
     "projects": "Projects",
-    "allProjects": "All Projects",
     "experience": "Experience",
     "touch": "Get in Touch",
     "langLabel": "Auf Deutsch wechseln",
     "menuOpen": "Open menu",
     "menuClose": "Close menu",
+    "back": "Back",
     "home": "Home"
   },
   "home": {
