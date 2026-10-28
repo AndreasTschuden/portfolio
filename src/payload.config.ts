@@ -9,9 +9,10 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Projects } from './collections/Projects'
 import { Technologies } from './collections/Technologies'
-import { Experience } from './collections/Experience'
-import { Education } from './collections/Education'
-import { Settings } from './collections/Settings'
+import { Experiences } from './collections/Experiences'
+import { ContactSubmissions } from './collections/ContactSubmissions'
+import { Home } from './globals/Home'
+import { SiteSettings } from './globals/SiteSettings'
 
 import { s3Storage } from '@payloadcms/storage-s3'
 
@@ -25,7 +26,16 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Projects, Technologies, Experience, Education, Settings],
+  collections: [Projects, Experiences, Technologies, ContactSubmissions, Media, Users],
+  globals: [Home, SiteSettings],
+  localization: {
+    locales: [
+      { label: 'English', code: 'en' },
+      { label: 'Deutsch', code: 'de' },
+    ],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

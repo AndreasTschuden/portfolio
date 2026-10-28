@@ -1,106 +1,90 @@
-import {
-  lexicalEditor,
-  BoldFeature,
-  ItalicFeature,
-  UnderlineFeature,
-  HeadingFeature,
-  LinkFeature,
-  OrderedListFeature,
-  UnorderedListFeature,
-  FixedToolbarFeature,
-} from '@payloadcms/richtext-lexical'
-
 import type { CollectionConfig } from 'payload'
 
-const richText = () =>
-  lexicalEditor({
-    features: ({ defaultFeatures }) => [
-      ...defaultFeatures,
-      BoldFeature(),
-      ItalicFeature(),
-      UnderlineFeature(),
-      HeadingFeature(),
-      LinkFeature(),
-      OrderedListFeature(),
-      UnorderedListFeature(),
-      FixedToolbarFeature(),
-    ],
-  })
+import { anyone, authenticated } from '../access'
+import { slugField } from '../fields/slug'
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
   admin: {
-    defaultColumns: ['title', 'status', 'publishedAt'],
     useAsTitle: 'title',
+    defaultColumns: ['title', 'year', 'type', 'status', 'featured', 'order'],
+    group: 'Content',
+  },
+  defaultSort: 'order',
+  access: {
+    read: anyone,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
+    // ── Sidebar ─────────────────────────────────────────────
+    slugField('title'),
+    {
+      name: 'order',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        description: 'Order on Home and All Projects; "Next Project" follows it',
+      },
+    },
+    {
+      name: 'featured',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: { position: 'sidebar', description: 'Show in the horizontal slider on Home' },
+    },
+
     // ── Core ────────────────────────────────────────────────
-    { name: 'title', type: 'text', required: true },
-    { name: 'slug', type: 'text', required: true, unique: true },
-    {
-      name: 'excerpt',
-      type: 'textarea',
-      admin: { description: 'Short lede shown on the homepage card and hero' },
-    },
-
-    // ── Status ──────────────────────────────────────────────
-    {
-      name: 'status',
-      type: 'select',
-      options: [
-        { label: 'Shipped · In production', value: 'shipped' },
-        { label: 'In Progress', value: 'in-progress' },
-        { label: 'Archived', value: 'archived' },
-      ],
-      defaultValue: 'shipped',
-    },
-
-    // ── Tags (shown under title) ─────────────────────────────
-    {
-      name: 'tags',
-      type: 'array',
-      fields: [{ name: 'tag', type: 'text', required: true }],
-      admin: { description: 'Short keyword tags shown under the project title' },
-    },
-
-    // ── Meta strip ──────────────────────────────────────────
-    {
-      name: 'meta',
-      type: 'group',
-      label: 'Meta Strip',
-      fields: [
-        { name: 'role', type: 'text', admin: { description: 'e.g. Fullstack' } },
-        { name: 'roleNote', type: 'text', admin: { description: 'e.g. Solo build' } },
-        { name: 'year', type: 'text', admin: { description: 'e.g. 2025' } },
-        { name: 'period', type: 'text', admin: { description: 'e.g. Q1 — Q3' } },
-        { name: 'timeline', type: 'text', admin: { description: 'e.g. 14 weeks' } },
-        { name: 'timelineNote', type: 'text', admin: { description: 'e.g. Design → ship' } },
-        { name: 'client', type: 'text', admin: { description: 'e.g. Tourism board' } },
-        { name: 'clientNote', type: 'text', admin: { description: 'e.g. Carinthia, AT' } },
-      ],
-    },
-
-    // ── Description ─────────────────────────────────────────
+    { name: 'title', type: 'text', required: true, localized: true },
     {
       name: 'description',
-      type: 'richText',
-      label: 'Project Description',
-      editor: richText(),
+      type: 'textarea',
+      localized: true,
+      admin: { description: 'Short text for cards and the intro' },
     },
-
-    // ── Media ───────────────────────────────────────────────
     { name: 'coverImage', type: 'upload', relationTo: 'media' },
+
+    // ── Meta ────────────────────────────────────────────────
     {
-      name: 'gallery',
-      type: 'array',
+      type: 'row',
       fields: [
-        { name: 'image', type: 'upload', relationTo: 'media' },
-        { name: 'label', type: 'text', admin: { description: 'e.g. 01 · Editor' } },
-        { name: 'caption', type: 'text' },
+        { name: 'year', type: 'text', admin: { description: 'e.g. 2025', width: '25%' } },
+        {
+          name: 'type',
+          type: 'select',
+          options: [
+            { label: 'School', value: 'school' },
+            { label: 'Work', value: 'work' },
+            { label: 'Personal', value: 'personal' },
+          ],
+          admin: { width: '25%' },
+        },
+        {
+          name: 'status',
+          type: 'select',
+          options: [
+            { label: 'Live', value: 'live' },
+            { label: 'Done', value: 'done' },
+            { label: 'WIP', value: 'wip' },
+          ],
+          admin: { width: '25%' },
+        },
+        {
+          name: 'teamSize',
+          type: 'number',
+          min: 1,
+          admin: { description: '1 = Solo', width: '25%' },
+        },
       ],
     },
-
-    // ── Technologies ────────────────────────────────────────
+    {
+      name: 'role',
+      type: 'text',
+      localized: true,
+      admin: { description: 'e.g. Full-stack' },
+    },
     {
       name: 'technologies',
       type: 'relationship',
@@ -108,12 +92,44 @@ export const Projects: CollectionConfig = {
       hasMany: true,
     },
 
-    // ── Links ───────────────────────────────────────────────
-    { name: 'projectUrl', type: 'text' },
-    { name: 'githubUrl', type: 'text' },
+    // ── Case study ──────────────────────────────────────────
+    {
+      name: 'caseStudy',
+      type: 'group',
+      fields: [
+        { name: 'problem', type: 'textarea', localized: true },
+        { name: 'problemImage', type: 'upload', relationTo: 'media' },
+        { name: 'solution', type: 'textarea', localized: true },
+        { name: 'solutionImage', type: 'upload', relationTo: 'media' },
+        { name: 'outcome', type: 'textarea', localized: true },
+        { name: 'outcomeImage', type: 'upload', relationTo: 'media' },
+      ],
+    },
 
-    // ── Flags ───────────────────────────────────────────────
-    { name: 'featured', type: 'checkbox' },
-    { name: 'publishedAt', type: 'date' },
+    // ── A look inside ───────────────────────────────────────
+    {
+      name: 'screens',
+      type: 'array',
+      label: 'Screens ("A look inside")',
+      fields: [
+        { name: 'label', type: 'text', localized: true },
+        {
+          type: 'row',
+          fields: [
+            { name: 'desktop', type: 'upload', relationTo: 'media' },
+            { name: 'mobile', type: 'upload', relationTo: 'media' },
+          ],
+        },
+      ],
+    },
+
+    // ── Links ───────────────────────────────────────────────
+    {
+      type: 'row',
+      fields: [
+        { name: 'liveUrl', type: 'text' },
+        { name: 'repoUrl', type: 'text' },
+      ],
+    },
   ],
 }
