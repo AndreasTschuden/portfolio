@@ -67,7 +67,7 @@ export default async function ProjectPage({ params }: Props) {
         back={{ href: `${base}/projects`, label: m.nav.allProjects }}
       />
 
-      <section className="px-gutter pt-[190px]">
+      <section className="px-gutter pt-[140px] md:pt-[190px]">
         <div className="flex flex-col pl-inset">
           <h1 className="m-0 text-h1 leading-none font-bold text-black">
             <Mask delay={80} innerClassName="-mb-[.22em] pb-[.22em]">
@@ -85,7 +85,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
           {(buildWith.length > 0 || techs.length > 0) && (
             <>
-              <h2 className="mt-10 mb-0 text-4xl leading-[1.3] font-medium text-navy">
+              <h2 className="mt-10 mb-0 text-[28px] md:text-4xl leading-[1.3] font-medium text-navy">
                 <Mask>{t.build}</Mask>
               </h2>
               {buildWith.length > 0 ? (
@@ -129,7 +129,7 @@ export default async function ProjectPage({ params }: Props) {
       {screens.length > 0 && <ScreenSlider screens={screens} t={t} />}
 
       {next && (
-        <section className="px-gutter pt-[150px]">
+        <section className="px-gutter pt-24 md:pt-[150px]">
           <NextTeaser
             href={`${base}/projects/${next.slug}`}
             label={t.nextProject}

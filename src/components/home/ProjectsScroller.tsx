@@ -108,7 +108,7 @@ export function ProjectsScroller({ projects, intro, allHref, t }: Props) {
                 ref={(el) => {
                   cards.current[i] = el
                 }}
-                className={`flex aspect-[658/422] w-[min(820px,88vw,calc((100vh-220px)*1.559))] flex-none origin-center flex-col gap-3.5 rounded-[20px] px-4 pt-[13px] pb-[18px] text-inherit no-underline will-change-transform ${theme.bg}`}
+                className={`flex aspect-[4/5] w-[min(820px,88vw,calc((100vh-220px)*1.559))] sm:aspect-[658/422] flex-none origin-center flex-col gap-3.5 rounded-[20px] px-4 pt-[13px] pb-[18px] text-inherit no-underline will-change-transform ${theme.bg}`}
               >
                 <div className={`relative flex-auto overflow-hidden rounded-2xl ${theme.img}`}>
                   {p.cover && (

@@ -49,7 +49,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       <section
         id="about"
-        className="flex flex-wrap items-start justify-between gap-x-20 gap-y-[60px] px-gutter pt-[110px]"
+        className="flex flex-wrap items-start justify-between gap-x-20 gap-y-12 px-gutter pt-20 md:gap-y-[60px] md:pt-[110px]"
       >
         <div className="flex max-w-[560px] flex-[1_1_420px] flex-col gap-5">
           <h2 className="m-0 text-h2 leading-[1.1] font-medium text-navy">
@@ -114,13 +114,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         />
       </section>
 
-      <section className="pt-[170px]">
+      <section className="pt-28 md:pt-[170px]">
         <div className="px-gutter">
           <h2 className="m-0 text-h2 leading-[1.1] font-medium text-navy">
             <Mask>{t.stack}</Mask>
           </h2>
         </div>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-5 px-gutter pt-12">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-4 px-gutter pt-8 md:gap-5 md:pt-12">
           {(home.stackGroups ?? []).map((g, i) => (
             <Reveal
               key={g.id ?? i}
@@ -159,8 +159,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         }))}
       />
 
-      <section id="contact" className="flex flex-wrap gap-[60px] px-gutter pt-[170px]">
-        <div className="flex max-w-[560px] flex-[1_1_360px] flex-col justify-between gap-20">
+      <section
+        id="contact"
+        className="flex flex-wrap gap-x-[60px] gap-y-16 px-gutter pt-28 md:gap-y-[60px] md:pt-[170px]"
+      >
+        <div className="flex max-w-[560px] flex-[1_1_360px] flex-col justify-between gap-12 md:gap-20">
           <h2 className="m-0 text-h2 leading-[1.35] font-bold text-black">
             {headline.map((line, i) => (
               <Mask

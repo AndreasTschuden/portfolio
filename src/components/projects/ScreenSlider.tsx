@@ -69,15 +69,15 @@ export function ScreenSlider({ screens, t }: Props) {
   }
 
   const arrowButton =
-    'flex size-[75px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-black shadow-[inset_0_0_0_1px_rgb(0_0_0)] [transition:box-shadow_.3s,color_.3s,background-color_.3s] enabled:hover:bg-mist disabled:cursor-default disabled:text-haze disabled:shadow-[inset_0_0_0_1px_var(--color-haze)]'
+    'flex size-14 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-black shadow-[inset_0_0_0_1px_rgb(0_0_0)] [transition:box-shadow_.3s,color_.3s,background-color_.3s] enabled:hover:bg-mist sm:size-[75px] disabled:cursor-default disabled:text-haze disabled:shadow-[inset_0_0_0_1px_var(--color-haze)]'
 
   return (
-    <section className="px-gutter pt-[75px]">
-      <div className="flex items-center gap-5">
+    <section className="px-gutter pt-20 md:pt-[75px]">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-4">
         <h2 className="m-0 text-[clamp(40px,4.17vw,60px)] leading-[1.35] font-medium whitespace-nowrap text-black">
           <Mask>{t.look}</Mask>
         </h2>
-        <Reveal delay={150} className="ml-auto flex items-center gap-[25px]">
+        <Reveal delay={150} className="ml-auto flex items-center gap-3 sm:gap-[25px]">
           <span
             className="min-w-[53px] text-right text-base text-black tabular-nums"
             aria-live="polite"
@@ -92,6 +92,7 @@ export function ScreenSlider({ screens, t }: Props) {
             className={arrowButton}
           >
             <svg
+              className="size-8 sm:size-10"
               width="40"
               height="40"
               viewBox="0 0 40 40"
@@ -112,6 +113,7 @@ export function ScreenSlider({ screens, t }: Props) {
             className={arrowButton}
           >
             <svg
+              className="size-8 sm:size-10"
               width="40"
               height="40"
               viewBox="0 0 40 40"
@@ -133,7 +135,7 @@ export function ScreenSlider({ screens, t }: Props) {
           startX.current = e.clientX
         }}
         onPointerUp={onPointerUp}
-        className="relative mt-[22px] aspect-[1298/603] touch-pan-y"
+        className="relative mt-[22px] aspect-[390/330] touch-pan-y md:aspect-[1298/603]"
       >
         {screens.map((s, k) => {
           const d = k - slide
@@ -148,7 +150,7 @@ export function ScreenSlider({ screens, t }: Props) {
                 ref={(el) => {
                   laptops.current[k] = el
                 }}
-                className="absolute top-0 -left-[2.7%] h-full w-[71.57%]"
+                className="absolute top-0 -left-[2%] h-[67.5%] w-[88%] md:-left-[2.7%] md:h-full md:w-[71.57%]"
               >
                 <div
                   className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
@@ -159,7 +161,7 @@ export function ScreenSlider({ screens, t }: Props) {
                         : 'translate-x-[8%] opacity-0'
                   }`}
                 >
-                  <div className="absolute top-[3%] left-[7%] h-[85%] w-[86%] rounded-[18px_18px_4px_4px] bg-device px-[1.6%] pt-[1.6%] pb-[2.2%] shadow-[inset_0_0_0_1.5px_var(--color-bezel)]">
+                  <div className="absolute top-[3%] left-[7%] h-[85%] w-[86%] rounded-[10px_10px_3px_3px] bg-device md:rounded-[18px_18px_4px_4px] px-[1.6%] pt-[1.6%] pb-[2.2%] shadow-[inset_0_0_0_1.5px_var(--color-bezel)]">
                     <div className="absolute top-[.8%] left-1/2 size-[5px] -translate-x-1/2 rounded-full bg-bezel" />
                     <div className="relative size-full overflow-hidden rounded-[4px] bg-mist">
                       {s.desktop && (
@@ -167,13 +169,13 @@ export function ScreenSlider({ screens, t }: Props) {
                           src={s.desktop}
                           alt={t.desktopAlt + label}
                           fill
-                          sizes="65vw"
+                          sizes="(max-width: 768px) 88vw, 65vw"
                           className="object-cover"
                         />
                       )}
                     </div>
                   </div>
-                  <div className="absolute inset-x-0 top-[88%] h-[2.4%] rounded-b-[14px] bg-[linear-gradient(rgb(214_220_228),rgb(168_178_192))] shadow-[0_30px_40px_-18px_rgb(17_42_70/.35)]">
+                  <div className="absolute inset-x-0 top-[88%] h-[3.2%] rounded-b-[8px] md:h-[2.4%] md:rounded-b-[14px] bg-[linear-gradient(rgb(214_220_228),rgb(168_178_192))] shadow-[0_30px_40px_-18px_rgb(17_42_70/.35)]">
                     <div className="absolute top-0 left-1/2 h-[45%] w-[15%] -translate-x-1/2 rounded-b-lg bg-[rgb(150_160_175)]" />
                   </div>
                 </div>
@@ -182,7 +184,7 @@ export function ScreenSlider({ screens, t }: Props) {
                 ref={(el) => {
                   phones.current[k] = el
                 }}
-                className="absolute top-[2.65%] left-[78.5%] h-[94.86%] w-[21.73%]"
+                className="absolute top-[25%] left-[67%] h-[75%] w-[31.3%] md:top-[2.65%] md:left-[78.5%] md:h-[94.86%] md:w-[21.73%]"
               >
                 <div
                   className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
@@ -200,7 +202,7 @@ export function ScreenSlider({ screens, t }: Props) {
                           src={s.mobile}
                           alt={t.mobileAlt + label}
                           fill
-                          sizes="20vw"
+                          sizes="(max-width: 768px) 32vw, 20vw"
                           className="object-cover"
                         />
                       )}

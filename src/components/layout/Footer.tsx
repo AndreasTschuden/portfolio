@@ -23,7 +23,7 @@ export function Footer({ name }: { name: string }) {
   })
 
   return (
-    <footer ref={footer} className="overflow-hidden px-gutter pt-[150px]">
+    <footer ref={footer} className="overflow-hidden px-gutter pt-24 md:pt-[150px]">
       <div
         aria-label={name}
         className="flex h-[.6em] justify-center overflow-hidden text-footer leading-none font-bold tracking-[-0.01em] whitespace-nowrap text-navy"

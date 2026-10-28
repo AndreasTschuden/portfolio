@@ -18,15 +18,18 @@ export function NextTeaser({ href, label, title, labelClassName = 'text-secondar
       <Reveal as="span" className={`text-base ${labelClassName}`}>
         {label}
       </Reveal>
-      <span className="flex items-center gap-12">
-        <Mask delay={80} className="block text-teaser leading-[1.3] font-medium text-black">
+      <span className="flex items-center gap-5 sm:gap-12">
+        <Mask
+          delay={80}
+          className="block text-[clamp(36px,10vw,56px)] leading-[1.3] font-medium text-black md:text-teaser"
+        >
           <span className="inline-block transition-transform duration-600 ease-soft group-hover:translate-x-2.5">
             {title}
           </span>
         </Mask>
         <Reveal type="pop" delay={250} as="span" className="flex-none">
-          <span className="flex size-20 items-center justify-center rounded-full bg-secondary text-white transition-colors duration-400 group-hover:bg-navy">
-            <ArrowUpRightLarge className="transition-transform duration-600 ease-soft group-hover:rotate-45" />
+          <span className="flex size-14 items-center justify-center rounded-full sm:size-20 bg-secondary text-white transition-colors duration-400 group-hover:bg-navy">
+            <ArrowUpRightLarge className="size-9 sm:size-[50px] transition-transform duration-600 ease-soft group-hover:rotate-45" />
           </span>
         </Reveal>
       </span>

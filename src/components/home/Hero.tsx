@@ -124,7 +124,7 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
         </Reveal>
       </div>
 
-      <div className="relative ml-auto aspect-[862/950] h-[calc(100svh-121px)] min-h-[520px] max-w-[60vw] min-w-0 flex-[0_1_auto] self-end overflow-hidden">
+      <div className="relative mt-12 ml-[clamp(56px,7.8vw,112px)] aspect-[862/950] min-w-0 flex-[1_1_100%] self-end overflow-hidden lg:mt-0 lg:ml-auto lg:h-[calc(100svh-121px)] lg:min-h-[520px] lg:max-w-[60vw] lg:flex-[0_1_auto]">
         <Reveal type="scale" delay={150} className="absolute inset-0">
           <div
             ref={portraitRef}
@@ -135,7 +135,7 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
               alt={portrait.alt}
               fill
               priority
-              sizes="60vw"
+              sizes="(max-width: 1024px) 85vw, 60vw"
               className="object-cover object-left-top"
             />
           </div>

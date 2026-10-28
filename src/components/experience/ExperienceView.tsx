@@ -60,7 +60,7 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
 
   return (
     <>
-      <section className="px-gutter pt-[190px]">
+      <section className="px-gutter pt-[140px] md:pt-[190px]">
         <div className="flex flex-wrap items-end justify-between gap-x-20 gap-y-10 pl-inset">
           <div className="flex flex-[1_1_520px] flex-col">
             <h1 className="m-0 text-h1 leading-none font-bold text-black">
@@ -100,11 +100,11 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
         </div>
       </section>
 
-      <section ref={timeline} className="relative px-gutter pt-[90px]">
+      <section ref={timeline} className="relative px-gutter pt-16 md:pt-[90px]">
         <div className="relative pl-inset">
           <div
             aria-hidden
-            className="absolute inset-y-0 left-[calc(var(--spacing-inset)+clamp(120px,22vw,320px)+19px)] w-px bg-line"
+            className="absolute inset-y-0 left-[calc(var(--spacing-inset)+11.5px)] w-px bg-line md:left-[calc(var(--spacing-inset)+clamp(120px,22vw,320px)+19px)]"
           >
             <div
               ref={fill}
@@ -121,9 +121,9 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                 ref={(el) => {
                   articles.current[i] = el
                 }}
-                className={`${e.type === filter ? 'grid' : 'hidden'} grid-cols-[clamp(120px,22vw,320px)_40px_minmax(0,1fr)] gap-x-[clamp(16px,2vw,32px)] pb-[clamp(72px,9vw,120px)]`}
+                className={`${e.type === filter ? 'grid' : 'hidden'} grid-cols-[24px_minmax(0,1fr)] gap-x-4 gap-y-5 pb-16 md:grid-cols-[clamp(120px,22vw,320px)_40px_minmax(0,1fr)] md:gap-x-[clamp(16px,2vw,32px)] md:gap-y-0 md:pb-[clamp(72px,9vw,120px)]`}
               >
-                <Reveal className="sticky top-[130px] flex flex-col gap-1.5 self-start">
+                <Reveal className="col-start-2 row-start-1 flex flex-col gap-1.5 self-start md:sticky md:top-[130px] md:col-start-1">
                   <span
                     className={`text-[clamp(44px,5.55vw,80px)] leading-none font-medium tabular-nums transition-colors duration-500 ${
                       a ? 'text-navy' : 'text-haze'
@@ -134,9 +134,9 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                   <span className="text-base text-black">{e.period}</span>
                 </Reveal>
 
-                <div className="relative flex justify-center pt-[clamp(14px,1.8vw,26px)]">
+                <div className="relative col-start-1 row-span-2 row-start-1 flex justify-center pt-[clamp(14px,1.8vw,26px)] md:col-start-2 md:row-span-1">
                   <span
-                    className={`sticky top-[150px] size-[15px] rounded-full [transition:background-color_.4s,box-shadow_.5s_var(--ease-soft)] ${
+                    className={`size-[15px] rounded-full md:sticky md:top-[150px] [transition:background-color_.4s,box-shadow_.5s_var(--ease-soft)] ${
                       a
                         ? 'bg-navy shadow-[0_0_0_1px_var(--color-navy),0_0_0_10px_rgb(17_42_70/.12)]'
                         : 'bg-white shadow-[0_0_0_1px_var(--color-navy),0_0_0_0_rgb(17_42_70/.12)]'
@@ -144,7 +144,10 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                   />
                 </div>
 
-                <Reveal delay={120} className="min-w-0">
+                <Reveal
+                  delay={120}
+                  className="col-start-2 row-start-2 min-w-0 md:col-start-3 md:row-start-1"
+                >
                   <div
                     onMouseEnter={() => setHover(i)}
                     onMouseLeave={() => setHover(null)}
