@@ -1,0 +1,17 @@
+{
+  "name": "Andreas Tschuden — Fullstack Developer",
+  "short_name": "AT Portfolio",
+  "description": "Fullstack developer based in Villach, Austria. Portfolio, work, experience and contact.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0D12",
+  "theme_color": "#74D0F1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

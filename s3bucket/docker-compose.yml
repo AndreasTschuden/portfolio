@@ -1,0 +1,121 @@
+services:
+  master:
+    image: ${SEAWEEDFS_IMAGE}
+    ports:
+      - ${MASTER_PORT}:${MASTER_PORT}
+      - ${MASTER_DEBUG_PORT}:${MASTER_DEBUG_PORT}
+      - ${MASTER_METRICS_PORT}:${MASTER_METRICS_PORT}
+    networks:
+      - portfolio-network
+    volumes:
+      - master-data:/data
+    command: 'master -ip=master -ip.bind=0.0.0.0 -metricsPort=${MASTER_METRICS_PORT}'
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${MASTER_PORT}/cluster/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  volume:
+    image: ${SEAWEEDFS_IMAGE}
+    ports:
+      - ${VOLUME_PORT}:${VOLUME_PORT}
+      - ${VOLUME_DEBUG_PORT}:${VOLUME_DEBUG_PORT}
+      - ${VOLUME_METRICS_PORT}:${VOLUME_METRICS_PORT}
+    networks:
+      - portfolio-network
+    volumes:
+      - volume-data:/data
+    command: 'volume -ip=volume -master="master:${MASTER_PORT}" -ip.bind=0.0.0.0 -port=${VOLUME_PORT} -metricsPort=${VOLUME_METRICS_PORT}'
+    depends_on:
+      master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${VOLUME_PORT}/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  filer:
+    image: ${SEAWEEDFS_IMAGE}
+    ports:
+      - ${FILER_PORT}:${FILER_PORT}
+      - ${FILER_DEBUG_PORT}:${FILER_DEBUG_PORT}
+      - ${FILER_METRICS_PORT}:${FILER_METRICS_PORT}
+    networks:
+      - portfolio-network
+    volumes:
+      - filer-data:/data
+    command: 'filer -ip=filer -master="master:${MASTER_PORT}" -ip.bind=0.0.0.0 -metricsPort=${FILER_METRICS_PORT}'
+    tty: true
+    stdin_open: true
+    depends_on:
+      master:
+        condition: service_healthy
+      volume:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${FILER_PORT}/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  s3:
+    image: ${SEAWEEDFS_IMAGE}
+    ports:
+      - ${S3_HOST_PORT}:${S3_PORT}
+      - ${S3_METRICS_PORT}:${S3_METRICS_PORT}
+    networks:
+      - portfolio-network
+    command: 's3 -filer="filer:${FILER_PORT}" -ip.bind=0.0.0.0 -metricsPort=${S3_METRICS_PORT}'
+    depends_on:
+      master:
+        condition: service_healthy
+      volume:
+        condition: service_healthy
+      filer:
+        condition: service_healthy
+  webdav:
+    image: ${SEAWEEDFS_IMAGE}
+    ports:
+      - ${WEBDAV_PORT}:${WEBDAV_PORT}
+    networks:
+      - portfolio-network
+    command: 'webdav -filer="filer:${FILER_PORT}" -ip.bind=0.0.0.0'
+    depends_on:
+      master:
+        condition: service_healthy
+      volume:
+        condition: service_healthy
+      filer:
+        condition: service_healthy
+  admin:
+    image: ${SEAWEEDFS_IMAGE}
+    ports:
+      - ${ADMIN_PORT}:${ADMIN_PORT}
+    networks:
+      - portfolio-network
+    command: 'shell -filer="filer:${FILER_PORT}"'
+    depends_on:
+      master:
+        condition: service_healthy
+      volume:
+        condition: service_healthy
+      filer:
+        condition: service_healthy
+  # prometheus:
+  #   image: prom/prometheus:v2.21.0
+  #   ports:
+  #     - 9000:9090
+  #   volumes:
+  #     - ./prometheus:/etc/prometheus
+  #   command: '--web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml'
+  #   depends_on:
+  #     - s3
+
+volumes:
+  master-data:
+  volume-data:
+  filer-data:
+
+networks:
+  portfolio-network:
+    name: portfolio-network   # <-- forces the actual Docker network name
+    external: true
