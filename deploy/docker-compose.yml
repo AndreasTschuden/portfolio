@@ -116,7 +116,7 @@ services:
       - backend
 
   mongo:
-    image: mongo:8.0.34
+    image: mongo:7.0
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?set MONGO_ROOT_USER in .env}
