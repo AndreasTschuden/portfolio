@@ -47,13 +47,6 @@ export const Home: GlobalConfig = {
               type: 'array',
               fields: [{ name: 'text', type: 'textarea', localized: true }],
             },
-            {
-              name: 'cv',
-              type: 'upload',
-              relationTo: 'media',
-              filterOptions: { mimeType: { equals: 'application/pdf' } },
-              admin: { description: 'PDF' },
-            },
           ],
         },
         {

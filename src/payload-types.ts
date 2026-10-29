@@ -72,6 +72,7 @@ export interface Config {
     technologies: Technology;
     'contact-submissions': ContactSubmission;
     media: Media;
+    cv: Cv;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,6 +86,7 @@ export interface Config {
     technologies: TechnologiesSelect<false> | TechnologiesSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    cv: CvSelect<false> | CvSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -293,7 +295,6 @@ export interface Experience {
         id?: string | null;
       }[]
     | null;
-  technologies?: (string | Technology)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -310,6 +311,33 @@ export interface ContactSubmission {
   locale?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cv".
+ */
+export interface Cv {
+  id: string;
+  /**
+   * e.g. CV 2026
+   */
+  title: string;
+  /**
+   * Shown on the site in this language; falls back to the newest CV otherwise
+   */
+  language: 'en' | 'de';
+  _objectKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -381,6 +409,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'cv';
+        value: string | Cv;
       } | null)
     | ({
         relationTo: 'users';
@@ -486,7 +518,6 @@ export interface ExperiencesSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
-  technologies?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -581,6 +612,26 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cv_select".
+ */
+export interface CvSelect<T extends boolean = true> {
+  title?: T;
+  language?: T;
+  _objectKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -671,10 +722,6 @@ export interface Home {
           id?: string | null;
         }[]
       | null;
-    /**
-     * PDF
-     */
-    cv?: (string | null) | Media;
   };
   services?:
     | {
@@ -749,7 +796,6 @@ export interface HomeSelect<T extends boolean = true> {
               text?: T;
               id?: T;
             };
-        cv?: T;
       };
   services?:
     | T

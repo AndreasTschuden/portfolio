@@ -35,3 +35,12 @@ export const getExperiences = cache(async (locale: Locale) => {
   ).find({ collection: 'experiences', locale, depth: 1, sort: 'order', limit: 100 })
   return docs
 })
+
+/** Newest CV in the locale's language, else the newest CV at all. */
+export const getCV = cache(async (locale: Locale) => {
+  const p = await payload()
+  const find = (where = {}) =>
+    p.find({ collection: 'cv', where, sort: '-updatedAt', limit: 1, depth: 0 })
+  const { docs } = await find({ language: { equals: locale } })
+  return docs[0] ?? (await find()).docs[0] ?? null
+})

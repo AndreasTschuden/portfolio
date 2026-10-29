@@ -11,6 +11,7 @@ import { Projects } from './collections/Projects'
 import { Technologies } from './collections/Technologies'
 import { Experiences } from './collections/Experiences'
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import { CV } from './collections/CV'
 import { Home } from './globals/Home'
 import { SiteSettings } from './globals/SiteSettings'
 
@@ -26,7 +27,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Projects, Experiences, Technologies, ContactSubmissions, Media, Users],
+  collections: [Projects, Experiences, Technologies, ContactSubmissions, Media, CV, Users],
   globals: [Home, SiteSettings],
   localization: {
     locales: [
@@ -49,6 +50,7 @@ export default buildConfig({
     s3Storage({
       collections: {
         media: true,
+        cv: true,
       },
       bucket: process.env.S3_BUCKET!,
       config: {

@@ -1,4 +1,4 @@
-import type { Media, Technology } from '@/payload-types'
+import type { Cv, Media, Technology } from '@/payload-types'
 
 /** Relationship fields are either populated documents or bare ids, depending on depth. */
 export const populated = <T extends { id: string }>(value: T | string | null | undefined) =>
@@ -12,7 +12,7 @@ export const populatedList = <T extends { id: string }>(
  * File URL with a version from `updatedAt`. A re-uploaded file often keeps its URL
  * (e.g. /api/media/file/hero.png); the version makes caches like next/image's pick it up.
  */
-export const mediaSrc = (media: Media | string | null | undefined) => {
+export const mediaSrc = (media: Media | Cv | string | null | undefined) => {
   const doc = populated(media)
   if (!doc?.url) return null
   const version = Date.parse(doc.updatedAt)

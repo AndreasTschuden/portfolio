@@ -12,17 +12,18 @@ import { Mask, Reveal } from '@/components/motion/Reveal'
 import { TechLogo } from '@/components/TechLogo'
 import { getMessages, isLocale } from '@/i18n'
 import { mediaImage, mediaSrc, populated, populatedList } from '@/lib/media'
-import { getHome, getLatestProjects, getSiteSettings } from '@/lib/payload'
+import { getCV, getHome, getLatestProjects, getSiteSettings } from '@/lib/payload'
 import type { Technology } from '@/payload-types'
 
 export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
 
-  const [home, site, projects] = await Promise.all([
+  const [home, site, projects, cvDoc] = await Promise.all([
     getHome(locale),
     getSiteSettings(locale),
     getLatestProjects(locale),
+    getCV(locale),
   ])
   const m = getMessages(locale)
   const t = m.home
@@ -30,7 +31,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const base = `/${locale}`
   const portrait = populated(home.hero?.portrait)
   const portraitSrc = mediaSrc(portrait)
-  const cv = mediaSrc(home.about?.cv)
+  const cv = mediaSrc(cvDoc)
   const headline = (site.contactHeadline ?? []).map((l) => l.line ?? '')
 
   return (
@@ -70,7 +71,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             {cv && (
               <a
                 href={cv}
-                download
+                download={cvDoc?.filename ?? true}
                 className="flex items-center gap-1 text-navy underline hover:text-secondary"
               >
                 {t.cv}
