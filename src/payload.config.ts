@@ -1,4 +1,5 @@
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -20,7 +21,14 @@ import { s3Storage } from '@payloadcms/storage-s3'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const serverURL = process.env.NEXT_PUBLIC_SITE_URL || undefined
+
 export default buildConfig({
+  serverURL,
+  // Auth cookies are only accepted from our own origin
+  csrf: serverURL ? [serverURL] : [],
+  // The site reads data through the Local API and the admin uses REST; GraphQL is unused.
+  graphQL: { disable: true },
   admin: {
     user: Users.slug,
     importMap: {
@@ -38,6 +46,14 @@ export default buildConfig({
     fallback: true,
   },
   editor: lexicalEditor(),
+  // Without RESEND_API_KEY (e.g. in dev) Payload writes emails to the console instead.
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        apiKey: process.env.RESEND_API_KEY,
+        defaultFromAddress: process.env.RESEND_FROM_EMAIL || '',
+        defaultFromName: process.env.RESEND_FROM_NAME || 'Portfolio',
+      })
+    : undefined,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
