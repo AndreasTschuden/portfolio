@@ -149,7 +149,7 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                   <div
                     onMouseEnter={() => setHover(i)}
                     onMouseLeave={() => setHover(null)}
-                    className="flex flex-col gap-[22px]"
+                    className="tap-hover flex flex-col gap-[22px]"
                   >
                     <div className="flex flex-col gap-2">
                       <h2 className="m-0 text-title leading-[1.2] font-medium text-balance text-black">
@@ -183,7 +183,7 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                             {e.learned.map((l, j) => (
                               <div
                                 key={j}
-                                className={`flex flex-col gap-3.5 rounded-[20px] px-[22px] pt-5 pb-[22px] [transition:background-color_.5s,color_.5s,translate_.5s_var(--ease-soft)] hover:-translate-y-1 ${
+                                className={`tap-hover flex flex-col gap-3.5 rounded-[20px] px-[22px] pt-5 pb-[22px] [transition:background-color_.5s,color_.5s,translate_.5s_var(--ease-soft)] hover:-translate-y-1 ${
                                   a ? 'bg-navy text-white' : 'bg-mist text-navy'
                                 }`}
                                 style={{ transitionDelay: `${a ? j * 90 : 0}ms` }}

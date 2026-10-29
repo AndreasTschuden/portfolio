@@ -24,7 +24,7 @@ export function TechLogo({ tech, size = 'lg', color = '112a46', invert = false }
 
   return (
     <span
-      className={`group/logo relative flex ${box} items-center justify-center transition-transform duration-350 ease-soft hover:-translate-y-[3px]`}
+      className={`tap-hover group/logo relative flex ${box} items-center justify-center transition-transform duration-350 ease-soft hover:-translate-y-[3px]`}
       aria-label={tech.name}
     >
       {custom ? (

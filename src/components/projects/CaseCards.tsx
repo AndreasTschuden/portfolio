@@ -6,7 +6,7 @@ import { pad } from '@/lib/media'
 
 import { Reveal } from '../motion/Reveal'
 
-/** Problem / Solution / Outcome. Hover, focus or click opens a card; click pins it. */
+/** Problem / Solution / Outcome. Hover, keyboard focus or click opens a card; click/tap pins it. */
 export function CaseCards({ cases }: { cases: { title: string; text: string }[] }) {
   const [hover, setHover] = useState<number | null>(null)
   const [pinned, setPinned] = useState<number | null>(null)
@@ -42,9 +42,10 @@ export function CaseCards({ cases }: { cases: { title: string; text: string }[] 
                 role="button"
                 tabIndex={0}
                 aria-expanded={on}
-                onMouseEnter={() => setHover(k)}
-                onMouseLeave={() => setHover(null)}
-                onFocus={() => setHover(k)}
+                // Touch taps only toggle the pin, otherwise the emulated hover/focus keeps the card open.
+                onPointerEnter={(e) => e.pointerType === 'mouse' && setHover(k)}
+                onPointerLeave={() => setHover(null)}
+                onFocus={(e) => e.currentTarget.matches(':focus-visible') && setHover(k)}
                 onBlur={() => setHover(null)}
                 onClick={() => setPinned((p) => (p === k ? null : k))}
                 onKeyDown={(e) => {

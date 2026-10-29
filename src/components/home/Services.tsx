@@ -43,7 +43,7 @@ export function Services({ services }: { services: { title: string; text: string
     <div className="grid flex-[0_1_572px] grid-cols-1 sm:mt-[50px] sm:grid-cols-2 gap-x-5 gap-y-[15px]">
       {services.map((s, i) => (
         <Reveal key={i} delay={i * 100}>
-          <div className="flex h-full min-h-[150px] cursor-default flex-col justify-between gap-[18px] rounded-[20px] bg-mist bg-[linear-gradient(var(--color-navy),var(--color-navy))] bg-no-repeat bg-position-[0_100%] bg-size-[100%_0%] px-[22px] py-5 text-navy [transition:background-size_.55s_var(--ease-soft),color_.35s] hover:bg-size-[100%_100%] hover:text-white">
+          <div className="tap-hover flex h-full min-h-[150px] cursor-default flex-col justify-between gap-[18px] rounded-[20px] bg-mist bg-[linear-gradient(var(--color-navy),var(--color-navy))] bg-no-repeat bg-position-[0_100%] bg-size-[100%_0%] px-[22px] py-5 text-navy [transition:background-size_.55s_var(--ease-soft),color_.35s] hover:bg-size-[100%_100%] hover:text-white">
             <div className="flex items-start justify-between">
               <span className="font-mono text-sm opacity-60">{pad(i + 1)}</span>
               {icons[i % icons.length]}
