@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import type { Messages } from '@/i18n'
 import { mediaSrc, pad, populatedList } from '@/lib/media'
+import { teamLabel } from '@/lib/project'
 import { cardTheme } from '@/lib/themes'
 import type { Project, Technology } from '@/payload-types'
 
@@ -20,8 +21,7 @@ type Props = {
 export function ProjectCard({ project, index, href, t }: Props) {
   const theme = cardTheme(index)
   const cover = mediaSrc(project.coverImage)
-  const team =
-    !project.teamSize || project.teamSize === 1 ? t.solo : `${project.teamSize} ${t.people}`
+  const team = teamLabel(project.teamSize, t)
   const meta = [
     [t.year, project.year],
     [t.role, project.role],

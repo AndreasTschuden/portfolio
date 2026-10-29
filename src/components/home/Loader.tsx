@@ -59,7 +59,7 @@ export function Loader({ name }: { name: string }) {
   return (
     <div
       aria-hidden
-      className={`fixed inset-0 z-100 flex flex-col items-center justify-center gap-7 bg-navy text-white transition-[clip-path] duration-650 ease-swift motion-reduce:hidden ${
+      className={`fixed inset-0 z-100 flex flex-col items-center justify-center gap-7 bg-navy text-white transition-[clip-path] duration-650 ease-swift motion-reduce:hidden animate-loader-failsafe ${
         step >= 4 ? '[clip-path:inset(0_0_100%_0)]' : '[clip-path:inset(0_0_0_0)]'
       }`}
     >

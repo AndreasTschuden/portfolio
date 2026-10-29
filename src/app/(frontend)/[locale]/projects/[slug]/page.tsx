@@ -46,7 +46,10 @@ export default async function ProjectPage({ params }: Props) {
   const t = m.project
   const base = `/${locale}`
 
-  const buildWith = populatedList<Media>(project.buildWith).filter((img) => img.url)
+  const buildWith = populatedList<Media>(project.buildWith).flatMap((img) => {
+    const src = mediaSrc(img)
+    return src ? [{ src, alt: img.alt }] : []
+  })
   const techs = populatedList<Technology>(project.technologies)
   const cs = project.caseStudy
   const cases = [cs?.problem, cs?.solution, cs?.outcome].map((text, k) => ({
@@ -94,7 +97,7 @@ export default async function ProjectPage({ params }: Props) {
                       className="relative aspect-[390/72] w-[390px] max-w-full"
                     >
                       <Image
-                        src={img.url!}
+                        src={img.src}
                         alt={img.alt}
                         fill
                         loading="eager"

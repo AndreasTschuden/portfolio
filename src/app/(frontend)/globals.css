@@ -30,4 +30,14 @@
   --text-teaser: clamp(56px, 5.55vw, 80px);
   --text-title: clamp(30px, 2.5vw, 36px);
   --text-footer: clamp(36px, 10.4vw, 150px);
+
+  /* Loader safety net: wipes the overlay away even if JavaScript never runs */
+  --animate-loader-failsafe: loader-failsafe 0.65s var(--ease-swift) 3s forwards;
+
+  @keyframes loader-failsafe {
+    to {
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+    }
+  }
 }

@@ -29,6 +29,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const name = site.name ?? ''
   const base = `/${locale}`
   const portrait = populated(home.hero?.portrait)
+  const portraitSrc = mediaSrc(portrait)
   const cv = mediaSrc(home.about?.cv)
   const headline = (site.contactHeadline ?? []).map((l) => l.line ?? '')
 
@@ -44,7 +45,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         hello={t.hello}
         intro={home.hero?.intro ?? ''}
         scrollDown={t.scrollDown}
-        portrait={{ src: portrait?.url ?? '/hero.png', alt: portrait?.alt ?? name }}
+        portrait={portrait && portraitSrc ? { src: portraitSrc, alt: portrait.alt || name } : null}
       />
 
       <section

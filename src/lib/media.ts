@@ -8,7 +8,18 @@ export const populatedList = <T extends { id: string }>(
   values: (T | string)[] | null | undefined,
 ) => (values ?? []).map(populated).filter((v): v is T => v !== null)
 
-export const mediaSrc = (media: Media | string | null | undefined) => populated(media)?.url ?? null
+/**
+ * File URL with a version from `updatedAt`. A re-uploaded file often keeps its URL
+ * (e.g. /api/media/file/hero.png); the version makes caches like next/image's pick it up.
+ */
+export const mediaSrc = (media: Media | string | null | undefined) => {
+  const doc = populated(media)
+  if (!doc?.url) return null
+  const version = Date.parse(doc.updatedAt)
+  return Number.isNaN(version)
+    ? doc.url
+    : `${doc.url}${doc.url.includes('?') ? '&' : '?'}v=${version}`
+}
 
 /** simpleicons.org logo, or the uploaded custom icon. `color` is a hex without # or a named color. */
 export const techIconSrc = (tech: Technology, color?: string) => {

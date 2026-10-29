@@ -7,13 +7,14 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  // Lets phones/tablets on the local network load the dev server's JS (e.g. http://10.0.0.17:3000).
+  // Without it Next blocks the dev chunks, the page never hydrates and the loader stays up.
+  allowedDevOrigins: ['10.*.*.*', '192.168.*.*', '172.16.*.*'],
   images: {
     localPatterns: [
       {
         pathname: '/api/media/file/**',
       },
-      // Portrait fallback when home.hero.portrait is empty
-      { pathname: '/hero.png' },
     ],
   },
   // The site lives under /[locale]; / goes to the default locale.

@@ -18,7 +18,8 @@ type Props = {
   /** Text wrapped in **…** is rendered bold */
   intro: string
   scrollDown: string
-  portrait: { src: string; alt: string }
+  /** home.hero.portrait from Payload; without it the hero has no image */
+  portrait: { src: string; alt: string } | null
 }
 
 export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: Props) {
@@ -49,7 +50,7 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
   return (
     <section
       id="top"
-      className="relative flex min-h-svh flex-wrap items-stretch pt-[73px] pb-12 pl-gutter"
+      className="relative flex min-h-svh flex-wrap items-stretch pt-[73px] pl-gutter"
     >
       <div className="absolute top-[150px] bottom-12 left-gutter flex w-3.5 flex-col items-center gap-6">
         <Reveal
@@ -75,7 +76,7 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
 
       <div
         ref={left}
-        className="relative z-[2] flex min-w-0 flex-[1_1_420px] flex-col justify-between gap-[clamp(32px,6vh,80px)] pt-[clamp(40px,8vh,110px)] pl-[clamp(56px,7.8vw,112px)]"
+        className="relative z-[2] flex min-w-0 flex-[1_1_420px] flex-col justify-between gap-[clamp(32px,6vh,80px)] pt-[clamp(40px,8vh,110px)] pl-[clamp(56px,7.8vw,112px)] lg:pb-12"
       >
         <div className="flex gap-[clamp(40px,5vw,72px)]">
           {stats.map((s, i) => (
@@ -124,23 +125,25 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
         </Reveal>
       </div>
 
-      <div className="relative mt-12 ml-[clamp(56px,7.8vw,112px)] aspect-[862/950] min-w-0 flex-[1_1_100%] self-end overflow-hidden lg:mt-0 lg:ml-auto lg:h-[calc(100svh-121px)] lg:min-h-[520px] lg:max-w-[60vw] lg:flex-[0_1_auto]">
-        <Reveal type="scale" delay={150} className="absolute inset-0">
-          <div
-            ref={portraitRef}
-            className="absolute top-0 -left-[0.4%] h-[110%] w-[106.4%] origin-top will-change-transform"
-          >
-            <Image
-              src={portrait.src}
-              alt={portrait.alt}
-              fill
-              priority
-              sizes="(max-width: 1024px) 85vw, 60vw"
-              className="object-cover object-left-top"
-            />
-          </div>
-        </Reveal>
-      </div>
+      {portrait && (
+        <div className="relative mt-12 ml-[clamp(56px,7.8vw,112px)] aspect-[862/950] min-w-0 flex-[1_1_100%] self-end overflow-hidden lg:mt-0 lg:ml-auto lg:h-[calc(100svh-73px)] lg:min-h-[520px] lg:max-w-[60vw] lg:flex-[0_1_auto]">
+          <Reveal type="scale" delay={150} className="absolute inset-0">
+            <div
+              ref={portraitRef}
+              className="absolute top-0 -left-[0.4%] h-[110%] w-[106.4%] origin-top will-change-transform"
+            >
+              <Image
+                src={portrait.src}
+                alt={portrait.alt}
+                fill
+                priority
+                sizes="(max-width: 1024px) 85vw, 60vw"
+                className="object-cover object-left-top"
+              />
+            </div>
+          </Reveal>
+        </div>
+      )}
     </section>
   )
 }
