@@ -8,7 +8,6 @@ deploy
 db
 s3bucket
 design_handoff
-seed-assets
 tests
 test-results
 playwright-report

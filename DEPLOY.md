@@ -194,15 +194,81 @@ Nach ungefähr einer Minute sollte `https://<DOMAIN>` mit gültigem Zertifikat l
 
 Öffne **direkt nach dem Start** `https://<DOMAIN>/admin` und lege deinen Admin-User an. Solange noch kein User existiert, kann das **jeder** tun, der die Seite zuerst aufruft.
 
-Übernimmst du in Schritt 9 deine lokale Datenbank, ist dein lokaler Admin-User schon dabei. Dann kannst du dich direkt mit den lokalen Zugangsdaten einloggen.
+Übernimmst du in Schritt 10 deine lokale Datenbank, ist dein lokaler Admin-User schon dabei. Dann kannst du dich direkt mit den lokalen Zugangsdaten einloggen.
 
 ---
 
-## 9. Inhalte von lokal übernehmen (optional)
+## 9. Inhalte per Seed einspielen
+
+Der Seed füllt die leere Seite mit fertigen Inhalten (Englisch und Deutsch):
+
+| Teil | Inhalt |
+|---|---|
+| Technologies | alle 54 Technologien mit Logos |
+| Media | dein Porträt (`seed-assets/hero.png`) |
+| `home` | Hero (Rolle, Zahlen, Intro, Porträt), About-Texte, die 4 Services, Stack-Gruppen, Projects-Intro |
+| `site-settings` | Name, Telefon, E-Mail, Kontakt-Überschrift, SEO-Titel und -Beschreibung, Vorschaubild für geteilte Links |
+| `cv` | deine Lebenslauf-PDFs, falls vorhanden (siehe unten) |
+
+**Projects und Experiences spielt der Seed standardmäßig nicht ein**, denn dort stehen nur Platzhalter. Die trägst du im Admin ein oder übernimmst sie aus deiner lokalen DB (Schritt 10).
+
+### 9.1 CV-PDFs bereitlegen (optional)
+
+Die PDFs sind absichtlich nicht im Git-Repo, weil es öffentlich ist. Kopiere sie von deinem Mac auf den Server:
+
+```bash
+# auf dem Mac
+scp Lebenslauf_EN.pdf root@<server-ip>:/opt/portfolio/seed-assets/cv/cv-en.pdf
+scp Lebenslauf_DE.pdf root@<server-ip>:/opt/portfolio/seed-assets/cv/cv-de.pdf
+```
+
+Die Namen müssen genau `cv-en.pdf` und `cv-de.pdf` sein. Eine der beiden Dateien reicht. Auf der englischen Seite wird dann `cv-en.pdf` verlinkt, auf der deutschen `cv-de.pdf`. Gibt es nur eine, wird sie in beiden Sprachen verlinkt.
+
+### 9.2 Seed ausführen
+
+Auf dem Server, nachdem der Stack läuft (Schritt 7):
+
+```bash
+cd /opt/portfolio/deploy
+docker compose run --rm --build seed
+```
+
+Beim ersten Mal wird dafür ein eigenes Image gebaut (ein paar Minuten). Am Ende steht in der Ausgabe ungefähr:
+
+```
+Seeded 54 technologies
+Seeded 1 media files
+Seeded global: home
+Seeded global: site-settings
+Seeded 1 CV files
+```
+
+Danach `https://<DOMAIN>` neu laden, die Inhalte sind sofort da.
+
+### 9.3 Nur einzelne Teile einspielen
+
+Mit `SEED_ONLY` wählst du die Teile aus, durch Komma getrennt. Technologien und Porträt laufen immer mit.
+
+```bash
+docker compose run --rm -e SEED_ONLY=cv seed                  # nur neue CV-PDFs
+docker compose run --rm -e SEED_ONLY=home,site-settings seed  # nur die Texte
+docker compose run --rm -e SEED_ONLY=technologies seed        # nur Technologien
+docker compose run --rm -e SEED_ONLY=projects,experiences seed  # Platzhalter-Projekte/-Erfahrungen
+```
+
+> **Achtung:** Der Seed **überschreibt** die Teile, die er einspielt, mit dem Stand aus `src/seed.ts`. Was du vorher im Admin daran geändert hast, ist danach weg. Er ist zum ersten Befüllen gedacht. Neue CV-PDFs (`SEED_ONLY=cv`) kannst du aber jederzeit einspielen, sie ersetzen die alten.
+
+Hast du nach einem `git pull` Texte in `src/seed.ts` geändert, baut `--build` das Seed-Image neu: `docker compose run --rm --build -e SEED_ONLY=home seed`.
+
+---
+
+## 10. Inhalte von lokal übernehmen (optional)
+
+Alternative zu Schritt 9: Du kopierst deine **komplette** lokale Datenbank samt allen Uploads (auch Projects, Experiences und Screenshots) auf den Server.
 
 Statt alles im Admin neu einzutragen, kannst du deine lokale Datenbank und die Uploads auf den Server kopieren. Diese Befehle laufen **auf deinem Mac**, im Projektordner, während die lokale DB (`db/`) und der lokale S3 (`s3bucket/`) laufen.
 
-### 9.1 Lokal exportieren
+### 10.1 Lokal exportieren
 
 ```bash
 mkdir -p transfer
@@ -222,7 +288,7 @@ docker run --rm -v "$PWD/transfer/media:/data" \
 scp -r transfer root@<server-ip>:/opt/portfolio/deploy/
 ```
 
-### 9.2 Auf dem Server importieren
+### 10.2 Auf dem Server importieren
 
 ```bash
 cd /opt/portfolio/deploy
@@ -245,7 +311,7 @@ rm -rf transfer               # enthält deine Daten, nicht liegen lassen
 
 ---
 
-## 10. Updates einspielen
+## 11. Updates einspielen
 
 Nach jedem `git push` auf `main`:
 
@@ -260,7 +326,7 @@ Die Seite ist während des Builds weiter erreichbar und nur beim Neustart des Co
 
 ---
 
-## 11. Backups
+## 12. Backups
 
 Alle Daten stecken in zwei Docker-Volumes: `portfolio_mongo-data` und `portfolio_seaweedfs-data`.
 
@@ -283,7 +349,7 @@ Am besten lädst du die Backups regelmäßig auch auf einen anderen Rechner heru
 
 ---
 
-## 12. Fehlersuche
+## 13. Fehlersuche
 
 | Problem | Ursache / Lösung |
 |---|---|
@@ -292,6 +358,7 @@ Am besten lädst du die Backups regelmäßig auch auf einen anderen Rechner heru
 | `Bad Gateway` | `payload` startet gerade oder ist abgestürzt: `docker compose logs payload`. |
 | Build bricht ab mit `Killed` / `out of memory` | Zu wenig RAM, Swap anlegen (Schritt 3.3). |
 | `required variable … is missing` | In `.env` fehlt ein Pflichtwert. |
+| Seed bricht ab mit `service "bucket" didn't complete successfully` | `docker compose logs bucket` ansehen; meist ist SeaweedFS noch nicht bereit. Nach kurzer Wartezeit erneut ausführen. |
 | Kontaktformular gibt Fehler `429` | Rate-Limit: mehr als 5 Anfragen pro Minute von derselben IP. Eine Minute warten. |
 | Keine Mail vom Kontaktformular | Prüfe `docker compose logs payload` auf „Could not send contact notification“, ob die Domain in Resend „Verified“ ist und ob `RESEND_FROM_EMAIL` auf dieser Domain liegt. |
 | DB-Login schlägt nach Passwortänderung fehl | Die Mongo-Passwörter in `.env` gelten nur beim ersten Start. Danach musst du sie in der DB ändern (Schritt 0). |

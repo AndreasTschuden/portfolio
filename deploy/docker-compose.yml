@@ -89,6 +89,32 @@ services:
       - proxy
       - backend
 
+  # Fills the CMS with the content from src/seed.ts. Not started by `up`; run it with
+  #   docker compose run --rm --build seed
+  seed:
+    profiles: [tools]
+    build:
+      context: ..
+      target: seed
+      args:
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+    environment:
+      DATABASE_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=${MONGO_DB}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      S3_ENDPOINT: http://seaweedfs:8333
+      S3_BUCKET: ${S3_BUCKET}
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      SEED_ONLY: ${SEED_ONLY:-}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      bucket:
+        condition: service_completed_successfully
+    networks:
+      - backend
+
   mongo:
     image: mongo:8.0.34
     restart: unless-stopped
@@ -136,12 +162,15 @@ services:
     networks:
       - backend
 
-  # One-shot: creates the bucket if it does not exist yet.
+  # One-shot: creates the bucket if it does not exist yet (an existing bucket counts as success).
   bucket:
     image: chrislusf/seaweedfs:4.51
     entrypoint: ['/bin/sh', '-c']
     command:
-      - echo "s3.bucket.create -name $$S3_BUCKET" | weed shell -master=seaweedfs:9333 -filer=seaweedfs:8888
+      - |
+        out=$$(echo "s3.bucket.create -name $$S3_BUCKET" | weed shell -master=seaweedfs:9333 -filer=seaweedfs:8888 2>&1)
+        echo "$$out"
+        case "$$out" in *"created bucket"*|*"already exists"*) exit 0 ;; *) exit 1 ;; esac
     environment:
       S3_BUCKET: ${S3_BUCKET:?set S3_BUCKET in .env}
     depends_on:
