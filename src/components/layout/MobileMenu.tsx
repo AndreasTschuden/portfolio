@@ -57,7 +57,7 @@ export function MobileMenu({ open, onClose, locale, t, desktop }: Props) {
   const home = `/${locale}`
   const links = [
     { href: `${home}#about`, label: t.about },
-    { href: `${home}#projects`, label: t.projects },
+    { href: `${home}/projects`, label: t.projects },
     { href: `${home}/experience`, label: t.experience },
   ]
 

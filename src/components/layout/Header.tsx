@@ -49,7 +49,7 @@ export function Header({ locale, t, back }: Props) {
   const links = [
     { href: onHome ? '#about' : `${home}#about`, label: t.about, current: false },
     {
-      href: onHome ? '#projects' : `${home}#projects`,
+      href: `${home}/projects`,
       label: t.projects,
       current: pathname.includes('/projects'),
     },
