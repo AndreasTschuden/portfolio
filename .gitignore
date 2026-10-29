@@ -43,6 +43,9 @@ next-env.d.ts
 
 /media
 
+# CV PDFs for the seed (personal; copied to the server by hand)
+/seed-assets/cv/*.pdf
+
 # Playwright
 node_modules/
 /test-results/

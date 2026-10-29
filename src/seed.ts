@@ -2,10 +2,15 @@
  * Seeds the portfolio with the content of the design handoff (EN + DE).
  * Idempotent: technologies are matched by name, projects by slug, experiences by
  * type + startYear, media by filename, so running it again updates instead of duplicating.
- * Images are taken from design_handoff/assets when that folder exists.
+ * Images and the CV PDFs come from seed-assets/ (CV files are optional, see seed-assets/cv).
  *
- * Run: pnpm seed
- *      SEED_ONLY=technologies pnpm seed   (only technologies + their icons)
+ * Run: pnpm seed                                   (technologies, media, home, site-settings, cv)
+ *      SEED_ONLY=home,site-settings pnpm seed      (technologies + media, then only these parts)
+ *      SEED_ONLY=technologies pnpm seed            (only technologies + their icons)
+ * Parts: home, site-settings, cv, projects, experiences. Projects and experiences hold
+ * placeholder content, so they only run when named explicitly.
+ *
+ * In production: docker compose run --rm seed (see DEPLOY.md)
  */
 import fs from 'fs'
 import path from 'path'
@@ -128,7 +133,7 @@ async function seedTechnologies(payload: Payload) {
 // The budgetly-laptop/phone assets are finished mockup renders, not raw screens, so the
 // "A look inside" screens stay empty until real screenshots are uploaded (desktop is required).
 
-const assetsDir = path.resolve(process.cwd(), 'design_handoff/assets')
+const assetsDir = path.resolve(process.cwd(), 'seed-assets')
 
 /** Uploads a file once (matched by filename); returns its id, or undefined if the file is missing. */
 async function seedMedia(payload: Payload, filePath: string, alt: L) {
@@ -158,6 +163,33 @@ async function seedAllMedia(payload: Payload): Promise<SeedMedia> {
       de: 'Porträt von Andreas Tschuden',
     }),
   }
+}
+
+// ── CV ──────────────────────────────────────────────────────────────────────
+// The PDFs are not in git; put them into seed-assets/cv/ before seeding.
+
+const cvFiles: { language: Locale; file: string; title: string }[] = [
+  { language: 'en', file: 'cv-en.pdf', title: 'CV (English)' },
+  { language: 'de', file: 'cv-de.pdf', title: 'Lebenslauf (Deutsch)' },
+]
+
+async function seedCV(payload: Payload) {
+  let count = 0
+  for (const { language, file, title } of cvFiles) {
+    const filePath = path.join(assetsDir, 'cv', file)
+    if (!fs.existsSync(filePath)) continue
+
+    const { docs } = await payload.find({
+      collection: 'cv',
+      where: { filename: { equals: file } },
+      limit: 1,
+    })
+    // Re-upload so a newer PDF replaces the stored one
+    if (docs[0]) await payload.delete({ collection: 'cv', id: docs[0].id })
+    await payload.create({ collection: 'cv', data: { title, language }, filePath })
+    count++
+  }
+  return count
 }
 
 // ── Projects ────────────────────────────────────────────────────────────────
@@ -468,19 +500,43 @@ async function seedHome(payload: Payload, techIds: Record<string, string>, media
     },
     p2,
     {
-      en: 'Currently in my fourth year at HTBLuVA Villach, specialising in advanced web development. I move easily betw‑ends, Next.js front‑ends, and the design layer that ties them together.',
-      de: 'Derzeit bin ich im vierten Jahrgang an der HTBLuVA Villach mit Schwerpunkt auf fortgeschrittener Webentwicklung. Ich bewege mich sicher zwischen Backends, Next.js-Frontends und der Designebene, die beides verbindet.',
+      en: 'I care about the details people notice: clear layouts, smooth interactions and pages that load fast. My goal is software that feels as good as it works.',
+      de: 'Mir sind die Details wichtig, die man beim Benutzen merkt: klare Layouts, flüssige Interaktionen und Seiten, die schnell laden. Mein Ziel ist Software, die sich so gut anfühlt, wie sie funktioniert.',
     },
   ]
-  const serviceText: L = {
-    en: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
-    de: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
+  const projectsIntro: L = {
+    en: 'A selection of school, internship and personal projects, each one built end‑to‑end, from the first sketch to deployment.',
+    de: 'Eine Auswahl an Schul-, Praktikums- und eigenen Projekten, jedes durchgehend umgesetzt, von der ersten Skizze bis zum Deployment.',
   }
   const services = [
-    { title: { en: 'Web Development', de: 'Webentwicklung' }, text: serviceText },
-    { title: { en: 'UI/UX Design', de: 'UI/UX Design' }, text: serviceText },
-    { title: { en: 'Responsive Design', de: 'Responsive Design' }, text: serviceText },
-    { title: { en: 'Performance', de: 'Performance' }, text: serviceText },
+    {
+      title: { en: 'Web Development', de: 'Webentwicklung' },
+      text: {
+        en: 'Full‑stack web apps with Next.js and Laravel, from the database to the front end.',
+        de: 'Full-Stack-Webapps mit Next.js und Laravel, von der Datenbank bis zum Frontend.',
+      },
+    },
+    {
+      title: { en: 'UI/UX Design', de: 'UI/UX Design' },
+      text: {
+        en: 'Wireframes, prototypes and design systems in Figma, built around real users.',
+        de: 'Wireframes, Prototypen und Designsysteme in Figma, ausgerichtet auf echte Nutzer.',
+      },
+    },
+    {
+      title: { en: 'Responsive Design', de: 'Responsive Design' },
+      text: {
+        en: 'Mobile‑first layouts that fit every screen, from a small phone to a wide desktop.',
+        de: 'Mobile-first Layouts, die auf jeden Bildschirm passen, vom Handy bis zum Desktop.',
+      },
+    },
+    {
+      title: { en: 'Performance', de: 'Performance' },
+      text: {
+        en: 'Optimised images, lean bundles and server rendering for pages that load fast.',
+        de: 'Optimierte Bilder, schlanke Bundles und Server-Rendering für kurze Ladezeiten.',
+      },
+    },
   ]
   const stackGroups = [
     {
@@ -566,7 +622,7 @@ async function seedHome(payload: Payload, techIds: Record<string, string>, media
         label: g.label.en,
         technologies: g.techs.map((name) => techIds[name]),
       })),
-      projectsIntro: p2.en,
+      projectsIntro: projectsIntro.en,
     },
   })
 
@@ -599,12 +655,12 @@ async function seedHome(payload: Payload, techIds: Record<string, string>, media
         })),
         en.stackGroups,
       ),
-      projectsIntro: p2.de,
+      projectsIntro: projectsIntro.de,
     },
   })
 }
 
-async function seedSiteSettings(payload: Payload) {
+async function seedSiteSettings(payload: Payload, media: SeedMedia) {
   const headline = [
     { en: 'Want to', de: 'Lust auf' },
     { en: 'talk to me?', de: 'ein Gespräch?' },
@@ -624,6 +680,7 @@ async function seedSiteSettings(payload: Payload) {
         title: 'Andreas Tschuden · UI/UX Designer & Web Developer',
         description:
           'Portfolio of Andreas Tschuden, UI/UX designer and web developer from Villach, Austria.',
+        ogImage: media.portrait,
       },
     },
   })
@@ -650,19 +707,38 @@ async function seedSiteSettings(payload: Payload) {
 
 const payload = await getPayload({ config })
 
+// Empty or unset SEED_ONLY means the default parts (compose passes an empty string when unset)
+const defaultParts = ['home', 'site-settings', 'cv']
+const named = (process.env.SEED_ONLY ?? '')
+  .split(',')
+  .map((part) => part.trim())
+  .filter(Boolean)
+const only = named.length > 0 ? named : defaultParts
+const wants = (part: string) => only.includes(part)
+
 try {
   const techIds = await seedTechnologies(payload)
   payload.logger.info(`Seeded ${Object.keys(techIds).length} technologies`)
   if (process.env.SEED_ONLY !== 'technologies') {
     const media = await seedAllMedia(payload)
     payload.logger.info(`Seeded ${Object.values(media).filter(Boolean).length} media files`)
-    await seedProjects(payload, techIds)
-    payload.logger.info(`Seeded ${projects.length} projects`)
-    await seedExperiences(payload, techIds)
-    payload.logger.info(`Seeded ${experiences.length} experiences`)
-    await seedHome(payload, techIds, media)
-    await seedSiteSettings(payload)
-    payload.logger.info('Seeded globals: home, site-settings')
+    if (wants('projects')) {
+      await seedProjects(payload, techIds)
+      payload.logger.info(`Seeded ${projects.length} projects`)
+    }
+    if (wants('experiences')) {
+      await seedExperiences(payload, techIds)
+      payload.logger.info(`Seeded ${experiences.length} experiences`)
+    }
+    if (wants('home')) {
+      await seedHome(payload, techIds, media)
+      payload.logger.info('Seeded global: home')
+    }
+    if (wants('site-settings')) {
+      await seedSiteSettings(payload, media)
+      payload.logger.info('Seeded global: site-settings')
+    }
+    if (wants('cv')) payload.logger.info(`Seeded ${await seedCV(payload)} CV files`)
   }
 } catch (err) {
   payload.logger.error(err)
