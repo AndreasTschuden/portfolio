@@ -21,12 +21,12 @@ import { s3Storage } from '@payloadcms/storage-s3'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const serverURL = process.env.NEXT_PUBLIC_SITE_URL || undefined
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL
 
 export default buildConfig({
-  serverURL,
-  // Auth cookies are only accepted from our own origin
-  csrf: serverURL ? [serverURL] : [],
+  // Auth cookies are only accepted from our own origin. (No serverURL: it would make
+  // upload URLs absolute, which next/image rejects.)
+  csrf: siteURL ? [siteURL] : [],
   // The site reads data through the Local API and the admin uses REST; GraphQL is unused.
   graphQL: { disable: true },
   admin: {
