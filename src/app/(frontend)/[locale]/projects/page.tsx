@@ -33,9 +33,7 @@ export default async function ProjectsPage({ params }: PageProps<'/[locale]/proj
       <section className="px-gutter pt-[140px] md:pt-[190px]">
         <div className="flex flex-wrap items-end justify-between gap-x-20 gap-y-6 pl-inset">
           <h1 className="m-0 text-h1 leading-none font-bold text-black">
-            <Mask delay={80} innerClassName="-mb-[.22em] pb-[.22em]">
-              {t.title}
-            </Mask>
+            <Mask delay={80}>{t.title}</Mask>
           </h1>
         </div>
       </section>

@@ -97,7 +97,7 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
               className="m-0 -ml-[0.04em] flex text-hello leading-[.86] font-normal tracking-[-0.02em] whitespace-nowrap text-navy"
             >
               {[...hello].map((char, i) => (
-                <Mask key={i} delay={100 + i * 70} className="inline-block pb-[.06em]">
+                <Mask key={i} delay={100 + i * 70} className="inline-block">
                   <span aria-hidden>{char}</span>
                 </Mask>
               ))}

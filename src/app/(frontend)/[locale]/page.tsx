@@ -11,7 +11,7 @@ import { Header } from '@/components/layout/Header'
 import { Mask, Reveal } from '@/components/motion/Reveal'
 import { TechLogo } from '@/components/TechLogo'
 import { getMessages, isLocale } from '@/i18n'
-import { mediaSrc, populated, populatedList } from '@/lib/media'
+import { mediaImage, mediaSrc, populated, populatedList } from '@/lib/media'
 import { getHome, getLatestProjects, getSiteSettings } from '@/lib/payload'
 import type { Technology } from '@/payload-types'
 
@@ -156,7 +156,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             .slice(0, 2)
             .map((tech) => tech.name)
             .join('  ·  '),
-          cover: mediaSrc(p.coverImage),
+          cover: mediaImage(p.coverImage),
         }))}
       />
 

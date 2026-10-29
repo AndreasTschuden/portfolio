@@ -75,10 +75,10 @@ export function Loader({ name }: { name: string }) {
         >
           <Logo width={80} height={70} />
         </div>
-        <div className="overflow-hidden pb-[.08em]">
+        <div className="-my-[.25em] overflow-hidden py-[.25em] text-[clamp(28px,4vw,48px)] leading-[1.1]">
           <div
-            className={`text-[clamp(28px,4vw,48px)] leading-[1.1] font-medium tracking-[-0.01em] whitespace-nowrap transition-transform duration-550 ease-soft ${
-              step >= 2 ? 'translate-y-0' : 'translate-y-[110%]'
+            className={`font-medium tracking-[-0.01em] whitespace-nowrap transition-transform duration-550 ease-soft ${
+              step >= 2 ? 'translate-y-0' : 'translate-y-[calc(110%+.5em)]'
             }`}
           >
             {name}

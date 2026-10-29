@@ -101,10 +101,10 @@ export function MobileMenu({ open, onClose, locale, t, desktop }: Props) {
             >
               {pad(i + 1)}
             </span>
-            <span className="block overflow-hidden pb-[.06em]">
+            <span className="-my-[.25em] block overflow-hidden py-[.25em] text-[clamp(40px,12vw,64px)] leading-[1.15]">
               <span
-                className={`inline-block text-[clamp(40px,12vw,64px)] leading-[1.15] font-medium transition-transform duration-700 ease-soft ${
-                  open ? 'translate-y-0' : 'translate-y-[110%]'
+                className={`inline-block font-medium transition-transform duration-700 ease-soft ${
+                  open ? 'translate-y-0' : 'translate-y-[calc(110%+.5em)]'
                 }`}
                 style={{ transitionDelay: open ? `${200 + i * 70}ms` : '0ms' }}
               >

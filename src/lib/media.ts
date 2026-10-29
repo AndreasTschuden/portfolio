@@ -21,6 +21,16 @@ export const mediaSrc = (media: Media | string | null | undefined) => {
     : `${doc.url}${doc.url.includes('?') ? '&' : '?'}v=${version}`
 }
 
+export type MediaImage = { src: string; ratio: number | null }
+
+/** File URL plus width / height, so frames can take the image's shape (no cropping, no bars). */
+export const mediaImage = (media: Media | string | null | undefined): MediaImage | null => {
+  const doc = populated(media)
+  const src = mediaSrc(doc)
+  if (!doc || !src) return null
+  return { src, ratio: doc.width && doc.height ? doc.width / doc.height : null }
+}
+
 /** simpleicons.org logo, or the uploaded custom icon. `color` is a hex without # or a named color. */
 export const techIconSrc = (tech: Technology, color?: string) => {
   const custom = mediaSrc(tech.icon)

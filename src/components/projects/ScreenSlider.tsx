@@ -3,12 +3,14 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 
+import type { MediaImage } from '@/lib/media'
+
 import { Mask, Reveal } from '../motion/Reveal'
 import { LaptopFrame } from './LaptopFrame'
 import { prefersReducedMotion } from '../motion/reduced-motion'
 import { clamp, useScrollFrame } from '../motion/useScrollFrame'
 
-export type Screen = { desktop: string; mobile: string | null; label: string }
+export type Screen = { desktop: MediaImage; mobile: MediaImage | null; label: string }
 
 type Props = {
   screens: Screen[]
@@ -136,8 +138,9 @@ export function ScreenSlider({ screens, t }: Props) {
           startX.current = e.clientX
         }}
         onPointerUp={onPointerUp}
-        className="relative mt-[22px] aspect-[390/330] touch-pan-y md:aspect-[1298/603]"
+        className="mt-[22px] grid touch-pan-y"
       >
+        {/* Slides share one grid cell, so the stage is as tall as the tallest slide. */}
         {screens.map((s, k) => {
           const d = k - slide
           const label = s.label ? ` – ${s.label}` : ''
@@ -145,20 +148,18 @@ export function ScreenSlider({ screens, t }: Props) {
             <div
               key={k}
               aria-hidden={d !== 0}
-              className={`absolute inset-0 ${d === 0 ? '' : 'pointer-events-none'}`}
+              className={`flex flex-col [grid-area:1/1] md:flex-row md:items-start ${d === 0 ? '' : 'pointer-events-none'}`}
             >
               <div
                 ref={(el) => {
                   laptops.current[k] = el
                 }}
-                className={`absolute h-[67.5%] w-[88%] md:top-0 md:h-full md:w-[71.57%] ${
-                  s.mobile
-                    ? 'top-0 -left-[2%] md:-left-[2.7%]'
-                    : 'top-[16.25%] left-[6%] md:left-[14.2%]'
+                className={`w-[88%] flex-none md:w-[71.57%] ${
+                  s.mobile ? '-ml-[2%] md:-ml-[2.7%]' : 'mx-auto'
                 }`}
               >
                 <div
-                  className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
+                  className={`[transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
                     d === 0
                       ? 'opacity-100'
                       : d < 0
@@ -167,7 +168,7 @@ export function ScreenSlider({ screens, t }: Props) {
                   }`}
                 >
                   <LaptopFrame
-                    src={s.desktop}
+                    image={s.desktop}
                     alt={t.desktopAlt + label}
                     sizes="(max-width: 768px) 88vw, 65vw"
                   />
@@ -178,10 +179,10 @@ export function ScreenSlider({ screens, t }: Props) {
                   ref={(el) => {
                     phones.current[k] = el
                   }}
-                  className="absolute top-[25%] left-[67%] h-[75%] w-[31.3%] md:top-[2.65%] md:left-[78.5%] md:h-[94.86%] md:w-[21.73%]"
+                  className="relative -mt-[36%] mr-[1.7%] w-[31.3%] flex-none self-end md:mt-[1.2%] md:mr-0 md:ml-auto md:w-[21.73%] md:self-start"
                 >
                   <div
-                    className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
+                    className={`[transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
                       d === 0
                         ? 'opacity-100 delay-80'
                         : d < 0
@@ -189,10 +190,13 @@ export function ScreenSlider({ screens, t }: Props) {
                           : 'translate-x-[30%] opacity-0'
                     }`}
                   >
-                    <div className="absolute inset-x-[2%] inset-y-[1%] rounded-[16%/8%] bg-device p-[5%] shadow-[inset_0_0_0_1.5px_var(--color-bezel),0_40px_60px_-30px_rgb(17_42_70/.45)]">
-                      <div className="relative size-full overflow-hidden rounded-[12%/6%] bg-mist">
+                    <div className="mx-[2%] my-[1%] rounded-[16%/8%] bg-device p-[5%] shadow-[inset_0_0_0_1.5px_var(--color-bezel),0_40px_60px_-30px_rgb(17_42_70/.45)]">
+                      <div
+                        className="relative overflow-hidden rounded-[12%/6%] bg-mist"
+                        style={{ aspectRatio: s.mobile.ratio ?? 9 / 19.5 }}
+                      >
                         <Image
-                          src={s.mobile}
+                          src={s.mobile.src}
                           alt={t.mobileAlt + label}
                           fill
                           sizes="(max-width: 768px) 32vw, 20vw"

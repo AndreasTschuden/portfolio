@@ -2,9 +2,9 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useRef, useState, type CSSProperties } from 'react'
 
-import { pad } from '@/lib/media'
+import { pad, type MediaImage } from '@/lib/media'
 import { cardTheme } from '@/lib/themes'
 
 import { ArrowUpRight } from '../icons'
@@ -17,7 +17,7 @@ export type ScrollerProject = {
   title: string
   href: string
   stack: string
-  cover: string | null
+  cover: MediaImage | null
 }
 
 type Props = {
@@ -108,14 +108,16 @@ export function ProjectsScroller({ projects, intro, allHref, t }: Props) {
                 ref={(el) => {
                   cards.current[i] = el
                 }}
-                className={`flex w-[88vw] sm:aspect-[658/422] sm:w-[min(820px,88vw,calc((100vh-220px)*1.559))] flex-none origin-center flex-col gap-3.5 rounded-[20px] px-4 pt-[13px] pb-[18px] text-inherit no-underline will-change-transform ${theme.bg}`}
+                // The image keeps the cover's aspect ratio; the card width is capped so it fits the viewport height.
+                style={{ '--ratio': p.cover?.ratio ?? 658 / 422 } as CSSProperties}
+                className={`flex w-[min(820px,88vw,calc((100svh-300px)*var(--ratio)))] flex-none origin-center flex-col gap-3.5 rounded-[20px] px-4 pt-[13px] pb-[18px] text-inherit no-underline will-change-transform ${theme.bg}`}
               >
                 <div
-                  className={`relative aspect-[3/2] flex-none overflow-hidden rounded-2xl sm:aspect-auto sm:flex-auto ${theme.img}`}
+                  className={`relative aspect-(--ratio) flex-none overflow-hidden rounded-2xl ${theme.img}`}
                 >
                   {p.cover && (
                     <Image
-                      src={p.cover}
+                      src={p.cover.src}
                       alt=""
                       fill
                       sizes="(max-width: 900px) 88vw, 820px"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 
 import { pad } from '@/lib/media'
 
@@ -11,12 +11,27 @@ export function CaseCards({ cases }: { cases: { title: string; text: string }[] 
   const [hover, setHover] = useState<number | null>(null)
   const [pinned, setPinned] = useState<number | null>(null)
   const active = hover ?? pinned
+  // Open cards grow to fit their text: measured text height + its top offset + room for the title.
+  const texts = useRef<(HTMLParagraphElement | null)[]>([])
+  const [textHeights, setTextHeights] = useState<number[]>([])
+
+  useEffect(() => {
+    const measure = () => setTextHeights(texts.current.map((p) => p?.offsetHeight ?? 0))
+    const observer = new ResizeObserver(measure)
+    texts.current.forEach((p) => p && observer.observe(p))
+    return () => observer.disconnect()
+  }, [cases.length])
 
   return (
     <div className="mt-[65px] flex flex-wrap items-start gap-x-5 gap-y-4">
       {cases.map((c, k) => {
         const on = active === k
         const dim = active !== null && !on
+        const textHeight = textHeights[k] ?? 0
+        const heights = {
+          '--open': `${Math.max(290, 76 + textHeight + 72)}px`,
+          '--open-md': `${Math.max(197, 28 + textHeight + 80)}px`,
+        } as CSSProperties
         return (
           <div
             key={k}
@@ -37,8 +52,9 @@ export function CaseCards({ cases }: { cases: { title: string; text: string }[] 
                   e.preventDefault()
                   setPinned((p) => (p === k ? null : k))
                 }}
-                className={`relative cursor-pointer md:h-[197px] overflow-hidden rounded-[20px] outline-none [transition:height_.7s_var(--ease-wipe),background-color_.45s] focus-visible:shadow-[0_0_0_2px_var(--color-secondary)] ${
-                  on ? 'h-[290px] bg-navy' : 'h-[120px] bg-mist'
+                style={heights}
+                className={`relative cursor-pointer overflow-hidden rounded-[20px] outline-none [transition:height_.7s_var(--ease-wipe),background-color_.45s] focus-visible:shadow-[0_0_0_2px_var(--color-secondary)] ${
+                  on ? 'h-(--open) bg-navy md:h-(--open-md)' : 'h-[120px] bg-mist md:h-[197px]'
                 }`}
               >
                 <div
@@ -60,6 +76,9 @@ export function CaseCards({ cases }: { cases: { title: string; text: string }[] 
                   </svg>
                 </div>
                 <p
+                  ref={(el) => {
+                    texts.current[k] = el
+                  }}
                   className={`absolute top-[76px] right-[27px] left-[27px] md:top-7 md:right-[110px] m-0 max-w-[420px] text-base leading-[1.45] text-pretty text-white [transition:opacity_.45s_var(--ease-soft),translate_.6s_var(--ease-soft)] ${
                     on ? 'translate-y-0 opacity-100 delay-280' : 'translate-y-4 opacity-0 delay-0'
                   }`}

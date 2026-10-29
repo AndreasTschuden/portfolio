@@ -88,14 +88,18 @@ type MaskProps = {
   children: ReactNode
 }
 
-/** Text slides up out of an overflow-hidden wrapper (data-reveal="mask"). */
+/**
+ * Text slides up out of an overflow-hidden wrapper (data-reveal="mask").
+ * The wrapper's padding (cancelled by negative margins, so layout is unchanged) leaves room
+ * for accents and descenders even at tight line heights; the extra travel hides the text below it.
+ */
 export function Mask({ delay = 0, className = 'block', innerClassName = '', children }: MaskProps) {
   const [ref, revealed] = useReveal<HTMLSpanElement>()
 
   return (
-    <span ref={ref} className={`overflow-hidden ${className}`}>
+    <span ref={ref} className={`-my-[.25em] overflow-hidden py-[.25em] ${className}`}>
       <span
-        className={`inline-block ${TRANSITION} ${revealed ? 'translate-y-0' : 'translate-y-[115%]'} ${innerClassName}`}
+        className={`inline-block ${TRANSITION} ${revealed ? 'translate-y-0' : 'translate-y-[calc(115%+.5em)]'} ${innerClassName}`}
         style={{ transitionDelay: `${delay}ms` }}
       >
         {children}

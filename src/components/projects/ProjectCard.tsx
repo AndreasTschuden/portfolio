@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import type { Messages } from '@/i18n'
-import { mediaSrc, pad, populatedList } from '@/lib/media'
+import { mediaImage, pad, populatedList } from '@/lib/media'
 import { teamLabel } from '@/lib/project'
 import { cardTheme } from '@/lib/themes'
 import type { Project, Technology } from '@/payload-types'
@@ -20,7 +20,7 @@ type Props = {
 
 export function ProjectCard({ project, index, href, t }: Props) {
   const theme = cardTheme(index)
-  const cover = mediaSrc(project.coverImage)
+  const cover = mediaImage(project.coverImage)
   const team = teamLabel(project.teamSize, t)
   const meta = [
     [t.year, project.year],
@@ -34,10 +34,14 @@ export function ProjectCard({ project, index, href, t }: Props) {
         href={href}
         className={`group grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-[clamp(20px,3vw,48px)] rounded-[20px] p-[13px] text-inherit no-underline transition-transform duration-600 ease-soft hover:-translate-y-1.5 ${theme.bg}`}
       >
-        <div className={`relative aspect-[658/422] overflow-hidden rounded-2xl ${theme.img}`}>
+        {/* Takes the cover's aspect ratio, so the whole image shows without bars */}
+        <div
+          className={`relative self-start overflow-hidden rounded-2xl ${theme.img}`}
+          style={{ aspectRatio: cover?.ratio ?? 658 / 422 }}
+        >
           {cover && (
             <Image
-              src={cover}
+              src={cover.src}
               alt=""
               fill
               sizes="(max-width: 900px) 100vw, 50vw"

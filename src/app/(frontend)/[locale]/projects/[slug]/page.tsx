@@ -10,7 +10,7 @@ import { LaptopFrame } from '@/components/projects/LaptopFrame'
 import { ScreenSlider } from '@/components/projects/ScreenSlider'
 import { TechLogo } from '@/components/TechLogo'
 import { getMessages, isLocale, type Locale } from '@/i18n'
-import { mediaSrc, populatedList } from '@/lib/media'
+import { mediaImage, populatedList } from '@/lib/media'
 import { getProjects, getSiteSettings } from '@/lib/payload'
 import type { Technology } from '@/payload-types'
 
@@ -46,7 +46,7 @@ export default async function ProjectPage({ params }: Props) {
   const t = m.project
   const base = `/${locale}`
 
-  const cover = mediaSrc(project.coverImage)
+  const cover = mediaImage(project.coverImage)
   const techs = populatedList<Technology>(project.technologies)
   const cs = project.caseStudy
   const cases = [cs?.problem, cs?.solution, cs?.outcome].map((text, k) => ({
@@ -54,8 +54,8 @@ export default async function ProjectPage({ params }: Props) {
     text: text ?? '',
   }))
   const screens = (project.screens ?? []).flatMap((s) => {
-    const desktop = mediaSrc(s.desktop)
-    return desktop ? [{ desktop, mobile: mediaSrc(s.mobile), label: s.label ?? '' }] : []
+    const desktop = mediaImage(s.desktop)
+    return desktop ? [{ desktop, mobile: mediaImage(s.mobile), label: s.label ?? '' }] : []
   })
 
   return (
@@ -68,9 +68,7 @@ export default async function ProjectPage({ params }: Props) {
         >
           <div className="flex min-w-0 flex-col pl-inset">
             <h1 className="m-0 text-h1 leading-none font-bold text-black">
-              <Mask delay={80} innerClassName="-mb-[.22em] pb-[.22em]">
-                {project.title}
-              </Mask>
+              <Mask delay={80}>{project.title}</Mask>
             </h1>
             {project.description && (
               <Reveal
@@ -98,9 +96,9 @@ export default async function ProjectPage({ params }: Props) {
           </div>
 
           {cover && (
-            <Reveal type="scale" delay={150} className="relative aspect-[929/603] w-full">
+            <Reveal type="scale" delay={150} className="w-full">
               <LaptopFrame
-                src={cover}
+                image={cover}
                 alt={project.title}
                 sizes="(max-width: 1024px) 90vw, 50vw"
                 priority

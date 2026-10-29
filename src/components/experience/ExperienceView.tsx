@@ -64,9 +64,7 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
         <div className="flex flex-wrap items-end justify-between gap-x-20 gap-y-10 pl-inset">
           <div className="flex flex-[1_1_520px] flex-col">
             <h1 className="m-0 text-h1 leading-none font-bold text-black">
-              <Mask delay={80} innerClassName="-mb-[.22em] pb-[.22em]">
-                {t.title}
-              </Mask>
+              <Mask delay={80}>{t.title}</Mask>
             </h1>
             <Reveal
               as="p"
