@@ -1,0 +1,162 @@
+# Production stack: Traefik (HTTPS via Let's Encrypt) → Payload/Next.js → MongoDB + SeaweedFS (S3).
+# Only Traefik is reachable from outside; everything else lives on the internal network.
+#
+#   cd deploy && cp .env.example .env   # fill in the values
+#   docker compose up -d --build
+#
+# See DEPLOY.md in the repository root for the full walkthrough.
+
+name: portfolio
+
+services:
+  traefik:
+    image: traefik:v3.7.16
+    restart: unless-stopped
+    command:
+      - --global.checknewversion=false
+      - --global.sendanonymoususage=false
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=portfolio-proxy
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL:?set ACME_EMAIL in .env}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks:
+      - proxy
+
+  payload:
+    build:
+      context: ..
+      args:
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN:?set DOMAIN in .env}
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=${MONGO_DB}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET in .env}
+      NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+      S3_ENDPOINT: http://seaweedfs:8333
+      S3_BUCKET: ${S3_BUCKET}
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
+      RESEND_FROM_NAME: ${RESEND_FROM_NAME:-}
+      CONTACT_TO_EMAIL: ${CONTACT_TO_EMAIL:-}
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.portfolio.loadbalancer.server.port=3000
+
+      - traefik.http.routers.portfolio.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.portfolio.entrypoints=websecure
+      - traefik.http.routers.portfolio.tls.certresolver=le
+      - traefik.http.routers.portfolio.service=portfolio
+      - traefik.http.routers.portfolio.middlewares=security-headers
+
+      # Contact form and login: at most ~5 requests per minute per IP (spam, password guessing)
+      - traefik.http.routers.portfolio-limited.rule=Host(`${DOMAIN}`) && Method(`POST`) && (Path(`/api/contact-submissions`) || PathPrefix(`/api/users/login`) || Path(`/api/users/forgot-password`) || Path(`/api/users/first-register`))
+      - traefik.http.routers.portfolio-limited.entrypoints=websecure
+      - traefik.http.routers.portfolio-limited.tls.certresolver=le
+      - traefik.http.routers.portfolio-limited.service=portfolio
+      - traefik.http.routers.portfolio-limited.middlewares=rate-limit,security-headers
+      - traefik.http.middlewares.rate-limit.ratelimit.average=5
+      - traefik.http.middlewares.rate-limit.ratelimit.period=1m
+      - traefik.http.middlewares.rate-limit.ratelimit.burst=5
+
+      - traefik.http.middlewares.security-headers.headers.stsSeconds=31536000
+      - traefik.http.middlewares.security-headers.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.security-headers.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.security-headers.headers.customFrameOptionsValue=SAMEORIGIN
+      - traefik.http.middlewares.security-headers.headers.referrerPolicy=strict-origin-when-cross-origin
+      - traefik.http.middlewares.security-headers.headers.permissionsPolicy=camera=(), microphone=(), geolocation=()
+      - traefik.http.middlewares.security-headers.headers.customResponseHeaders.X-Powered-By=
+    depends_on:
+      mongo:
+        condition: service_healthy
+      bucket:
+        condition: service_completed_successfully
+    networks:
+      - proxy
+      - backend
+
+  mongo:
+    image: mongo:8.0.34
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?set MONGO_ROOT_USER in .env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env}
+      # Read by mongo-init/create-app-user.js
+      MONGO_DB: ${MONGO_DB:?set MONGO_DB in .env}
+      MONGO_USER: ${MONGO_USER:?set MONGO_USER in .env}
+      MONGO_PASSWORD: ${MONGO_PASSWORD:?set MONGO_PASSWORD in .env}
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend
+
+  # Master, volume, filer and S3 gateway in one process. Media is served through
+  # Payload (/api/media/file/…), so the S3 port never has to be public.
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.51
+    restart: unless-stopped
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        printf '{"identities":[{"name":"payload","credentials":[{"accessKey":"%s","secretKey":"%s"}],"actions":["Admin","Read","Write","List","Tagging"]}]}' \
+          "$$S3_ACCESS_KEY_ID" "$$S3_SECRET_ACCESS_KEY" > /tmp/s3.json
+        exec weed server -dir=/data -ip=seaweedfs -ip.bind=0.0.0.0 -s3 -s3.config=/tmp/s3.json
+    environment:
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID in .env}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY in .env}
+    volumes:
+      - seaweedfs-data:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:9333/cluster/status && wget -qO- http://localhost:8888/ > /dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - backend
+
+  # One-shot: creates the bucket if it does not exist yet.
+  bucket:
+    image: chrislusf/seaweedfs:4.51
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - echo "s3.bucket.create -name $$S3_BUCKET" | weed shell -master=seaweedfs:9333 -filer=seaweedfs:8888
+    environment:
+      S3_BUCKET: ${S3_BUCKET:?set S3_BUCKET in .env}
+    depends_on:
+      seaweedfs:
+        condition: service_healthy
+    networks:
+      - backend
+
+volumes:
+  letsencrypt:
+  mongo-data:
+  seaweedfs-data:
+
+networks:
+  proxy:
+    name: portfolio-proxy
+  backend:
+    internal: true
