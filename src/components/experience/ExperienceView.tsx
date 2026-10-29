@@ -4,12 +4,10 @@ import { useRef, useState } from 'react'
 
 import type { Messages } from '@/i18n'
 import { pad } from '@/lib/media'
-import type { Technology } from '@/payload-types'
 
 import { Mask, Reveal } from '../motion/Reveal'
 import { prefersReducedMotion } from '../motion/reduced-motion'
 import { clamp, useScrollFrame } from '../motion/useScrollFrame'
-import { TechLogo } from '../TechLogo'
 
 type Kind = 'work' | 'edu'
 
@@ -23,7 +21,6 @@ export type Entry = {
   place: string
   description: string
   learned: { kind: string; title: string; text: string }[]
-  stack: Technology[]
 }
 
 /** Intro with Work/Education filter and the scroll-filled timeline. */
@@ -202,14 +199,6 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                             ))}
                           </div>
                         </>
-                      )}
-                      {e.stack.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-                          <span className="mr-1 text-sm text-secondary">{t.tools}</span>
-                          {e.stack.map((tech) => (
-                            <TechLogo key={tech.id} tech={tech} size="sm" color="112a46" />
-                          ))}
-                        </div>
                       )}
                     </div>
                   </div>

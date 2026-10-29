@@ -285,7 +285,6 @@ type ExperienceSeed = Pick<Experience, 'type' | 'startYear' | 'endYear'> & {
   place: L
   description: L
   learned: { kind: 'tech' | 'soft' | 'process'; title: L; text: L }[]
-  stack: string[]
 }
 
 const experiences: ExperienceSeed[] = [
@@ -327,7 +326,6 @@ const experiences: ExperienceSeed[] = [
         },
       },
     ],
-    stack: ['Laravel', 'PHP', 'MySQL', 'Git'],
   },
   {
     type: 'work',
@@ -359,7 +357,6 @@ const experiences: ExperienceSeed[] = [
         },
       },
     ],
-    stack: ['React', 'TypeScript', 'CSS3'],
   },
   {
     type: 'edu',
@@ -401,7 +398,6 @@ const experiences: ExperienceSeed[] = [
         },
       },
     ],
-    stack: ['Java', 'C#', 'SQL', 'Laravel', 'Next.js'],
   },
 ]
 
@@ -434,7 +430,6 @@ async function seedExperiences(payload: Payload, techIds: Record<string, string>
       endYear: e.endYear,
       order,
       learned: learned('en'),
-      technologies: e.stack.map((name) => techIds[name]),
     }
     const doc = docs[0]
       ? await payload.update({ collection: 'experiences', id: docs[0].id, locale: 'en', data: en })

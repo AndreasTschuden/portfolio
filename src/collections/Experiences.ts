@@ -76,12 +76,5 @@ export const Experiences: CollectionConfig = {
         { name: 'text', type: 'textarea', localized: true },
       ],
     },
-    {
-      name: 'technologies',
-      type: 'relationship',
-      relationTo: 'technologies',
-      hasMany: true,
-      label: 'New tools',
-    },
   ],
 }

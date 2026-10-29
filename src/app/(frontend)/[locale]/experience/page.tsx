@@ -6,9 +6,7 @@ import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 import { NextTeaser } from '@/components/layout/NextTeaser'
 import { getMessages, isLocale } from '@/i18n'
-import { populatedList } from '@/lib/media'
 import { getExperiences, getSiteSettings } from '@/lib/payload'
-import type { Technology } from '@/payload-types'
 
 export async function generateMetadata({
   params,
@@ -42,7 +40,6 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
       title: l.title ?? '',
       text: l.text ?? '',
     })),
-    stack: populatedList<Technology>(e.technologies),
   }))
 
   return (
