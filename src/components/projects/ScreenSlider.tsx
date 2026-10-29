@@ -4,17 +4,18 @@ import Image from 'next/image'
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 
 import { Mask, Reveal } from '../motion/Reveal'
+import { LaptopFrame } from './LaptopFrame'
 import { prefersReducedMotion } from '../motion/reduced-motion'
 import { clamp, useScrollFrame } from '../motion/useScrollFrame'
 
-export type Screen = { desktop: string | null; mobile: string | null; label: string }
+export type Screen = { desktop: string; mobile: string | null; label: string }
 
 type Props = {
   screens: Screen[]
   t: { look: string; prev: string; next: string; desktopAlt: string; mobileAlt: string }
 }
 
-/** "A look inside": laptop + phone mockup per screen, arrows / swipe / ←→ keys. */
+/** "A look inside": laptop (+ phone if there is a mobile screen) per screen, arrows / swipe / ←→ keys. */
 export function ScreenSlider({ screens, t }: Props) {
   const [slide, setSlide] = useState(0)
   const stage = useRef<HTMLDivElement>(null)
@@ -150,7 +151,11 @@ export function ScreenSlider({ screens, t }: Props) {
                 ref={(el) => {
                   laptops.current[k] = el
                 }}
-                className="absolute top-0 -left-[2%] h-[67.5%] w-[88%] md:-left-[2.7%] md:h-full md:w-[71.57%]"
+                className={`absolute h-[67.5%] w-[88%] md:top-0 md:h-full md:w-[71.57%] ${
+                  s.mobile
+                    ? 'top-0 -left-[2%] md:-left-[2.7%]'
+                    : 'top-[16.25%] left-[6%] md:left-[14.2%]'
+                }`}
               >
                 <div
                   className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
@@ -161,43 +166,31 @@ export function ScreenSlider({ screens, t }: Props) {
                         : 'translate-x-[8%] opacity-0'
                   }`}
                 >
-                  <div className="absolute top-[3%] left-[7%] h-[85%] w-[86%] rounded-[10px_10px_3px_3px] bg-device md:rounded-[18px_18px_4px_4px] px-[1.6%] pt-[1.6%] pb-[2.2%] shadow-[inset_0_0_0_1.5px_var(--color-bezel)]">
-                    <div className="absolute top-[.8%] left-1/2 size-[5px] -translate-x-1/2 rounded-full bg-bezel" />
-                    <div className="relative size-full overflow-hidden rounded-[4px] bg-mist">
-                      {s.desktop && (
-                        <Image
-                          src={s.desktop}
-                          alt={t.desktopAlt + label}
-                          fill
-                          sizes="(max-width: 768px) 88vw, 65vw"
-                          className="object-cover"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="absolute inset-x-0 top-[88%] h-[3.2%] rounded-b-[8px] md:h-[2.4%] md:rounded-b-[14px] bg-[linear-gradient(rgb(214_220_228),rgb(168_178_192))] shadow-[0_30px_40px_-18px_rgb(17_42_70/.35)]">
-                    <div className="absolute top-0 left-1/2 h-[45%] w-[15%] -translate-x-1/2 rounded-b-lg bg-[rgb(150_160_175)]" />
-                  </div>
+                  <LaptopFrame
+                    src={s.desktop}
+                    alt={t.desktopAlt + label}
+                    sizes="(max-width: 768px) 88vw, 65vw"
+                  />
                 </div>
               </div>
-              <div
-                ref={(el) => {
-                  phones.current[k] = el
-                }}
-                className="absolute top-[25%] left-[67%] h-[75%] w-[31.3%] md:top-[2.65%] md:left-[78.5%] md:h-[94.86%] md:w-[21.73%]"
-              >
+              {s.mobile && (
                 <div
-                  className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
-                    d === 0
-                      ? 'opacity-100 delay-80'
-                      : d < 0
-                        ? '-translate-x-[30%] opacity-0'
-                        : 'translate-x-[30%] opacity-0'
-                  }`}
+                  ref={(el) => {
+                    phones.current[k] = el
+                  }}
+                  className="absolute top-[25%] left-[67%] h-[75%] w-[31.3%] md:top-[2.65%] md:left-[78.5%] md:h-[94.86%] md:w-[21.73%]"
                 >
-                  <div className="absolute inset-x-[2%] inset-y-[1%] rounded-[16%/8%] bg-device p-[5%] shadow-[inset_0_0_0_1.5px_var(--color-bezel),0_40px_60px_-30px_rgb(17_42_70/.45)]">
-                    <div className="relative size-full overflow-hidden rounded-[12%/6%] bg-mist">
-                      {s.mobile && (
+                  <div
+                    className={`absolute inset-0 [transition:opacity_.6s_var(--ease-wipe),translate_.8s_var(--ease-wipe)] ${
+                      d === 0
+                        ? 'opacity-100 delay-80'
+                        : d < 0
+                          ? '-translate-x-[30%] opacity-0'
+                          : 'translate-x-[30%] opacity-0'
+                    }`}
+                  >
+                    <div className="absolute inset-x-[2%] inset-y-[1%] rounded-[16%/8%] bg-device p-[5%] shadow-[inset_0_0_0_1.5px_var(--color-bezel),0_40px_60px_-30px_rgb(17_42_70/.45)]">
+                      <div className="relative size-full overflow-hidden rounded-[12%/6%] bg-mist">
                         <Image
                           src={s.mobile}
                           alt={t.mobileAlt + label}
@@ -205,12 +198,12 @@ export function ScreenSlider({ screens, t }: Props) {
                           sizes="(max-width: 768px) 32vw, 20vw"
                           className="object-cover"
                         />
-                      )}
-                      <div className="pointer-events-none absolute top-[2.4%] left-1/2 h-[3.4%] w-[32%] -translate-x-1/2 rounded-full bg-device" />
+                        <div className="pointer-events-none absolute top-[2.4%] left-1/2 h-[3.4%] w-[32%] -translate-x-1/2 rounded-full bg-device" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           )
         })}

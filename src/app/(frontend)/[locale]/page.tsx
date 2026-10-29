@@ -12,7 +12,7 @@ import { Mask, Reveal } from '@/components/motion/Reveal'
 import { TechLogo } from '@/components/TechLogo'
 import { getMessages, isLocale } from '@/i18n'
 import { mediaSrc, populated, populatedList } from '@/lib/media'
-import { getHome, getProjects, getSiteSettings } from '@/lib/payload'
+import { getHome, getLatestProjects, getSiteSettings } from '@/lib/payload'
 import type { Technology } from '@/payload-types'
 
 export default async function HomePage({ params }: PageProps<'/[locale]'>) {
@@ -22,7 +22,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const [home, site, projects] = await Promise.all([
     getHome(locale),
     getSiteSettings(locale),
-    getProjects(locale, true),
+    getLatestProjects(locale),
   ])
   const m = getMessages(locale)
   const t = m.home

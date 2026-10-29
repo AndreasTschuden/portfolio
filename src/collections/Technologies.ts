@@ -35,7 +35,7 @@ export const Technologies: CollectionConfig = {
       name: 'icon',
       type: 'upload',
       relationTo: 'media',
-      admin: { description: 'Optional custom logo, overrides iconSlug' },
+      admin: { description: 'Optional custom logo (SVG), overrides iconSlug. Shown monochrome.' },
     },
     {
       name: 'category',

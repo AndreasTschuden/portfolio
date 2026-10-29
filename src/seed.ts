@@ -5,6 +5,7 @@
  * Images are taken from design_handoff/assets when that folder exists.
  *
  * Run: pnpm seed
+ *      SEED_ONLY=technologies pnpm seed   (only technologies + their icons)
  */
 import fs from 'fs'
 import path from 'path'
@@ -23,39 +24,92 @@ const withIds = <T extends object>(rows: T[], stored?: { id?: string | null }[] 
 
 // ── Technologies ────────────────────────────────────────────────────────────
 
-const technologies: Pick<Technology, 'name' | 'iconSlug' | 'category'>[] = [
+type TechSeed = Pick<Technology, 'name' | 'category'> & {
+  /** simpleicons.org slug; its logo is in seed-assets/tech-icons/tech-<slug>.svg */
+  iconSlug?: string
+  /** Monochrome SVG in seed-assets/tech-icons when it isn't tech-<iconSlug>.svg */
+  iconFile?: string
+}
+
+// JavaScript, TypeScript and Next.js are frontend and backend; category holds one value.
+const technologies: TechSeed[] = [
+  // Frontend
+  { name: 'HTML5', iconSlug: 'html5', category: 'frontend' },
+  { name: 'CSS3', iconSlug: 'css', category: 'frontend' },
+  { name: 'SCSS', iconSlug: 'sass', category: 'frontend' },
   { name: 'JavaScript', iconSlug: 'javascript', category: 'frontend' },
   { name: 'TypeScript', iconSlug: 'typescript', category: 'frontend' },
-  { name: 'HTML5', iconSlug: 'html5', category: 'frontend' },
-  { name: 'CSS', iconSlug: 'css', category: 'frontend' },
+  { name: 'Tailwind CSS', iconSlug: 'tailwindcss', category: 'frontend' },
   { name: 'React', iconSlug: 'react', category: 'frontend' },
   { name: 'Next.js', iconSlug: 'nextdotjs', category: 'frontend' },
-  { name: 'Tailwind CSS', iconSlug: 'tailwindcss', category: 'frontend' },
   { name: 'Angular', iconSlug: 'angular', category: 'frontend' },
-  { name: 'Laravel', iconSlug: 'laravel', category: 'backend' },
+  { name: 'shadcn/ui', iconSlug: 'shadcnui', category: 'frontend' },
+  { name: 'Radix UI', iconSlug: 'radixui', category: 'frontend' },
+  { name: 'React Hook Form', iconSlug: 'reacthookform', category: 'frontend' },
+  { name: 'TanStack Form', iconSlug: 'tanstack', category: 'frontend' },
+  { name: 'Zod', iconSlug: 'zod', category: 'frontend' },
+  { name: 'Motion (Framer Motion)', iconFile: 'tech-motion.svg', category: 'frontend' },
+  { name: 'Chart.js', iconSlug: 'chartdotjs', category: 'frontend' },
+  // Backend
   { name: 'PHP', iconSlug: 'php', category: 'backend' },
+  { name: 'Node.js', iconSlug: 'nodedotjs', category: 'backend' },
   { name: 'NestJS', iconSlug: 'nestjs', category: 'backend' },
+  { name: 'Laravel', iconSlug: 'laravel', category: 'backend' },
+  { name: 'REST', iconFile: 'tech-rest.svg', category: 'backend' },
+  { name: 'Prisma', iconSlug: 'prisma', category: 'backend' },
+  { name: 'Drizzle', iconSlug: 'drizzle', category: 'backend' },
+  { name: 'OAuth 2.0', iconFile: 'tech-oauth.svg', category: 'backend' },
+  { name: 'Better Auth', iconSlug: 'betterauth', category: 'backend' },
+  { name: 'Supabase Auth', iconSlug: 'supabase', category: 'backend' },
+  { name: 'Payload CMS', iconSlug: 'payloadcms', category: 'backend' },
+  { name: 'WordPress', iconSlug: 'wordpress', category: 'backend' },
   { name: 'FastAPI', iconSlug: 'fastapi', category: 'backend' },
   { name: 'Java', iconSlug: 'openjdk', category: 'backend' },
   { name: 'C#', iconSlug: 'dotnet', category: 'backend' },
+  // Database
   { name: 'PostgreSQL', iconSlug: 'postgresql', category: 'database' },
   { name: 'MySQL', iconSlug: 'mysql', category: 'database' },
-  { name: 'MongoDB', iconSlug: 'mongodb', category: 'database' },
   { name: 'MariaDB', iconSlug: 'mariadb', category: 'database' },
-  { name: 'Prisma', iconSlug: 'prisma', category: 'database' },
-  { name: 'Drizzle ORM', iconSlug: 'drizzle', category: 'database' },
-  { name: 'SQL', iconSlug: 'mysql', category: 'database' },
-  { name: 'Docker', iconSlug: 'docker', category: 'tools' },
+  { name: 'SQLite', iconSlug: 'sqlite', category: 'database' },
+  { name: 'MongoDB', iconSlug: 'mongodb', category: 'database' },
+  { name: 'MinIO', iconSlug: 'minio', category: 'database' },
+  { name: 'SeaweedFS', iconFile: 'tech-seaweedfs.svg', category: 'database' },
+  { name: 'SQL', iconFile: 'tech-sql.svg', category: 'database' },
+  // Tools & Deploy
+  { name: 'Figma', iconSlug: 'figma', category: 'tools' },
+  {
+    name: 'Claude Design',
+    iconSlug: 'claude',
+    iconFile: 'tech-claude-design.svg',
+    category: 'tools',
+  },
+  { name: 'Claude Code', iconSlug: 'claude', iconFile: 'tech-claude-code.svg', category: 'tools' },
+  { name: 'Codex', iconFile: 'tech-codex.svg', category: 'tools' },
+  { name: 'ESLint', iconSlug: 'eslint', category: 'tools' },
+  { name: 'Biome', iconSlug: 'biome', category: 'tools' },
+  { name: 'Prettier', iconSlug: 'prettier', category: 'tools' },
   { name: 'Git', iconSlug: 'git', category: 'tools' },
+  { name: 'GitHub', iconSlug: 'github', category: 'tools' },
+  { name: 'GitLab', iconSlug: 'gitlab', category: 'tools' },
+  { name: 'CI/CD', iconFile: 'tech-cicd.svg', category: 'tools' },
+  { name: 'Docker', iconSlug: 'docker', category: 'tools' },
+  { name: 'Traefik', iconSlug: 'traefikproxy', category: 'tools' },
   { name: 'Vercel', iconSlug: 'vercel', category: 'tools' },
-  { name: 'Payload CMS', iconSlug: 'payloadcms', category: 'tools' },
+  { name: 'Microsoft Azure', iconFile: 'tech-azure.svg', category: 'tools' },
 ]
+
+const techIconsDir = path.resolve(process.cwd(), 'seed-assets/tech-icons')
 
 async function seedTechnologies(payload: Payload) {
   const ids: Record<string, string> = {}
 
-  for (const [order, tech] of technologies.entries()) {
-    const data = { ...tech, order }
+  for (const [order, { iconFile, ...tech }] of technologies.entries()) {
+    const icon = await seedMedia(
+      payload,
+      path.join(techIconsDir, iconFile ?? `tech-${tech.iconSlug}.svg`),
+      { en: `${tech.name} logo`, de: `${tech.name}-Logo` },
+    )
+    const data = { ...tech, iconSlug: tech.iconSlug ?? null, icon: icon ?? null, order }
     const { docs } = await payload.find({
       collection: 'technologies',
       where: { name: { equals: tech.name } },
@@ -72,14 +126,14 @@ async function seedTechnologies(payload: Payload) {
 
 // ── Media ───────────────────────────────────────────────────────────────────
 // The budgetly-laptop/phone assets are finished mockup renders, not raw screens, so the
-// "A look inside" screens stay empty until real screenshots are uploaded.
+// "A look inside" screens stay empty until real screenshots are uploaded (desktop is required).
 
 const assetsDir = path.resolve(process.cwd(), 'design_handoff/assets')
 
-/** Uploads design_handoff/assets/<file> once; returns its id, or undefined if the file is missing. */
-async function seedMedia(payload: Payload, file: string, alt: L) {
-  const filePath = path.join(assetsDir, file)
+/** Uploads a file once (matched by filename); returns its id, or undefined if the file is missing. */
+async function seedMedia(payload: Payload, filePath: string, alt: L) {
   if (!fs.existsSync(filePath)) return undefined
+  const file = path.basename(filePath)
 
   const { docs } = await payload.find({
     collection: 'media',
@@ -95,22 +149,20 @@ async function seedMedia(payload: Payload, file: string, alt: L) {
 
 type SeedMedia = {
   portrait?: string
-  stack?: string
 }
 
 async function seedAllMedia(payload: Payload): Promise<SeedMedia> {
   return {
-    portrait: await seedMedia(payload, 'hero.png', {
+    portrait: await seedMedia(payload, path.join(assetsDir, 'hero.png'), {
       en: 'Portrait of Andreas Tschuden',
       de: 'Porträt von Andreas Tschuden',
     }),
-    stack: await seedMedia(payload, 'budgetly-stack.png', { en: 'Tech stack', de: 'Tech-Stack' }),
   }
 }
 
 // ── Projects ────────────────────────────────────────────────────────────────
 
-type ProjectSeed = Pick<Project, 'year' | 'type' | 'status' | 'teamSize' | 'featured'> & {
+type ProjectSeed = Pick<Project, 'year' | 'type' | 'status' | 'teamSize'> & {
   title: L
   role: L
   description: L
@@ -137,7 +189,6 @@ const project = (
 ): ProjectSeed => ({
   title,
   ...meta,
-  featured: true,
   role,
   description,
   caseStudy: { problem: lorem, solution: lorem, outcome: lorem },
@@ -181,15 +232,7 @@ const projects: ProjectSeed[] = [
   ),
 ]
 
-const screenLabels: L[] = [
-  { en: 'Login', de: 'Login' },
-  { en: 'Dashboard', de: 'Dashboard' },
-  { en: 'Booking flow', de: 'Buchungsablauf' },
-  { en: 'Calendar', de: 'Kalender' },
-  { en: 'Settings', de: 'Einstellungen' },
-]
-
-async function seedProjects(payload: Payload, techIds: Record<string, string>, media: SeedMedia) {
+async function seedProjects(payload: Payload, techIds: Record<string, string>) {
   for (const [order, p] of projects.entries()) {
     const slug = slugify(p.title.en)
     const localized = (locale: Locale) => ({
@@ -213,14 +256,12 @@ async function seedProjects(payload: Payload, techIds: Record<string, string>, m
       ...localized('en'),
       slug,
       order,
-      featured: p.featured,
       year: p.year,
       type: p.type,
       status: p.status,
       teamSize: p.teamSize,
       technologies: p.stack.map((name) => techIds[name]),
-      buildWith: media.stack ? [media.stack, media.stack] : [],
-      screens: screenLabels.map((label) => ({ label: label.en, desktop: null, mobile: null })),
+      screens: [],
     }
     const doc = docs[0]
       ? await payload.update({ collection: 'projects', id: docs[0].id, locale: 'en', data: en })
@@ -230,13 +271,7 @@ async function seedProjects(payload: Payload, techIds: Record<string, string>, m
       collection: 'projects',
       id: doc.id,
       locale: 'de',
-      data: {
-        ...localized('de'),
-        screens: withIds(
-          screenLabels.map((label) => ({ label: label.de })),
-          doc.screens,
-        ),
-      },
+      data: localized('de'),
     })
   }
 }
@@ -324,7 +359,7 @@ const experiences: ExperienceSeed[] = [
         },
       },
     ],
-    stack: ['React', 'TypeScript', 'CSS'],
+    stack: ['React', 'TypeScript', 'CSS3'],
   },
   {
     type: 'edu',
@@ -455,16 +490,68 @@ async function seedHome(payload: Payload, techIds: Record<string, string>, media
   const stackGroups = [
     {
       label: { en: 'Frontend', de: 'Frontend' },
-      techs: ['JavaScript', 'TypeScript', 'HTML5', 'CSS', 'React', 'Next.js', 'Tailwind CSS'],
+      techs: [
+        'HTML5',
+        'CSS3',
+        'SCSS',
+        'JavaScript',
+        'TypeScript',
+        'Tailwind CSS',
+        'React',
+        'Next.js',
+        'Angular',
+        'shadcn/ui',
+        'Radix UI',
+        'React Hook Form',
+        'TanStack Form',
+        'Zod',
+        'Motion (Framer Motion)',
+        'Chart.js',
+      ],
     },
-    { label: { en: 'Backend', de: 'Backend' }, techs: ['Laravel', 'PHP', 'NestJS'] },
+    {
+      label: { en: 'Backend', de: 'Backend' },
+      techs: [
+        'JavaScript',
+        'TypeScript',
+        'PHP',
+        'Node.js',
+        'NestJS',
+        'Next.js',
+        'Laravel',
+        'REST',
+        'Prisma',
+        'Drizzle',
+        'OAuth 2.0',
+        'Better Auth',
+        'Supabase Auth',
+        'Payload CMS',
+        'WordPress',
+      ],
+    },
     {
       label: { en: 'Database', de: 'Datenbank' },
-      techs: ['PostgreSQL', 'MySQL', 'MongoDB', 'MariaDB', 'Prisma', 'Drizzle ORM'],
+      techs: ['PostgreSQL', 'MySQL', 'MariaDB', 'SQLite', 'MongoDB', 'MinIO', 'SeaweedFS'],
     },
     {
       label: { en: 'Tools & Deploy', de: 'Tools & Deploy' },
-      techs: ['Docker', 'Git', 'Vercel', 'Payload CMS'],
+      techs: [
+        'Figma',
+        'Claude Design',
+        'Claude Code',
+        'Codex',
+        'ESLint',
+        'Biome',
+        'Prettier',
+        'Git',
+        'GitHub',
+        'GitLab',
+        'CI/CD',
+        'Docker',
+        'Traefik',
+        'Vercel',
+        'Microsoft Azure',
+      ],
     },
   ]
 
@@ -571,15 +658,17 @@ const payload = await getPayload({ config })
 try {
   const techIds = await seedTechnologies(payload)
   payload.logger.info(`Seeded ${Object.keys(techIds).length} technologies`)
-  const media = await seedAllMedia(payload)
-  payload.logger.info(`Seeded ${Object.values(media).filter(Boolean).length} media files`)
-  await seedProjects(payload, techIds, media)
-  payload.logger.info(`Seeded ${projects.length} projects`)
-  await seedExperiences(payload, techIds)
-  payload.logger.info(`Seeded ${experiences.length} experiences`)
-  await seedHome(payload, techIds, media)
-  await seedSiteSettings(payload)
-  payload.logger.info('Seeded globals: home, site-settings')
+  if (process.env.SEED_ONLY !== 'technologies') {
+    const media = await seedAllMedia(payload)
+    payload.logger.info(`Seeded ${Object.values(media).filter(Boolean).length} media files`)
+    await seedProjects(payload, techIds)
+    payload.logger.info(`Seeded ${projects.length} projects`)
+    await seedExperiences(payload, techIds)
+    payload.logger.info(`Seeded ${experiences.length} experiences`)
+    await seedHome(payload, techIds, media)
+    await seedSiteSettings(payload)
+    payload.logger.info('Seeded globals: home, site-settings')
+  }
 } catch (err) {
   payload.logger.error(err)
   process.exitCode = 1

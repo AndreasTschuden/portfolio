@@ -145,10 +145,6 @@ export interface Project {
    * Order on Home and All Projects; "Next Project" follows it
    */
   order?: number | null;
-  /**
-   * Show in the horizontal slider on Home
-   */
-  featured?: boolean | null;
   title: string;
   /**
    * Short text for cards and the intro
@@ -170,22 +166,18 @@ export interface Project {
    */
   role?: string | null;
   technologies?: (string | Technology)[] | null;
-  /**
-   * Stack images next to "Build with." (390×72). Falls back to the technology logos.
-   */
-  buildWith?: (string | Media)[] | null;
   caseStudy?: {
     problem?: string | null;
-    problemImage?: (string | null) | Media;
     solution?: string | null;
-    solutionImage?: (string | null) | Media;
     outcome?: string | null;
-    outcomeImage?: (string | null) | Media;
   };
   screens?:
     | {
         label?: string | null;
-        desktop?: (string | null) | Media;
+        desktop: string | Media;
+        /**
+         * Optional – without it the phone mockup is hidden
+         */
         mobile?: (string | null) | Media;
         id?: string | null;
       }[]
@@ -264,7 +256,7 @@ export interface Technology {
    */
   iconSlug?: string | null;
   /**
-   * Optional custom logo, overrides iconSlug
+   * Optional custom logo (SVG), overrides iconSlug. Shown monochrome.
    */
   icon?: (string | null) | Media;
   category?: ('frontend' | 'backend' | 'database' | 'tools') | null;
@@ -443,7 +435,6 @@ export interface PayloadMigration {
 export interface ProjectsSelect<T extends boolean = true> {
   slug?: T;
   order?: T;
-  featured?: T;
   title?: T;
   description?: T;
   coverImage?: T;
@@ -453,16 +444,12 @@ export interface ProjectsSelect<T extends boolean = true> {
   teamSize?: T;
   role?: T;
   technologies?: T;
-  buildWith?: T;
   caseStudy?:
     | T
     | {
         problem?: T;
-        problemImage?: T;
         solution?: T;
-        solutionImage?: T;
         outcome?: T;
-        outcomeImage?: T;
       };
   screens?:
     | T

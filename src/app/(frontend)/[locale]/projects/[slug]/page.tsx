@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { Footer } from '@/components/layout/Footer'
@@ -7,12 +6,13 @@ import { Header } from '@/components/layout/Header'
 import { NextTeaser } from '@/components/layout/NextTeaser'
 import { Mask, Reveal } from '@/components/motion/Reveal'
 import { CaseCards } from '@/components/projects/CaseCards'
+import { LaptopFrame } from '@/components/projects/LaptopFrame'
 import { ScreenSlider } from '@/components/projects/ScreenSlider'
 import { TechLogo } from '@/components/TechLogo'
 import { getMessages, isLocale, type Locale } from '@/i18n'
 import { mediaSrc, populatedList } from '@/lib/media'
 import { getProjects, getSiteSettings } from '@/lib/payload'
-import type { Media, Technology } from '@/payload-types'
+import type { Technology } from '@/payload-types'
 
 type Props = PageProps<'/[locale]/projects/[slug]'>
 
@@ -46,79 +46,66 @@ export default async function ProjectPage({ params }: Props) {
   const t = m.project
   const base = `/${locale}`
 
-  const buildWith = populatedList<Media>(project.buildWith).flatMap((img) => {
-    const src = mediaSrc(img)
-    return src ? [{ src, alt: img.alt }] : []
-  })
+  const cover = mediaSrc(project.coverImage)
   const techs = populatedList<Technology>(project.technologies)
   const cs = project.caseStudy
   const cases = [cs?.problem, cs?.solution, cs?.outcome].map((text, k) => ({
     title: t.cases[k],
     text: text ?? '',
   }))
-  const screens = (project.screens ?? []).map((s) => ({
-    desktop: mediaSrc(s.desktop),
-    mobile: mediaSrc(s.mobile),
-    label: s.label ?? '',
-  }))
+  const screens = (project.screens ?? []).flatMap((s) => {
+    const desktop = mediaSrc(s.desktop)
+    return desktop ? [{ desktop, mobile: mediaSrc(s.mobile), label: s.label ?? '' }] : []
+  })
 
   return (
     <div>
       <Header locale={locale} t={m.nav} back={{ fallbackHref: `${base}/projects` }} />
 
       <section className="px-gutter pt-[140px] md:pt-[190px]">
-        <div className="flex flex-col pl-inset">
-          <h1 className="m-0 text-h1 leading-none font-bold text-black">
-            <Mask delay={80} innerClassName="-mb-[.22em] pb-[.22em]">
-              {project.title}
-            </Mask>
-          </h1>
-          {project.description && (
-            <Reveal
-              as="p"
-              delay={200}
-              className="mt-7 mb-0 max-w-[1080px] text-base leading-[1.38] text-pretty text-black"
-            >
-              {project.description}
-            </Reveal>
-          )}
-          {(buildWith.length > 0 || techs.length > 0) && (
-            <>
-              <h2 className="mt-10 mb-0 text-[28px] md:text-4xl leading-[1.3] font-medium text-navy">
-                <Mask>{t.build}</Mask>
-              </h2>
-              {buildWith.length > 0 ? (
-                <div className="mt-[22px] -ml-[30px] flex flex-wrap gap-x-4">
-                  {buildWith.map((img, i) => (
-                    <Reveal
-                      key={i}
-                      type="wipe"
-                      delay={100 + i * 160}
-                      className="relative aspect-[390/72] w-[390px] max-w-full"
-                    >
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        fill
-                        loading="eager"
-                        sizes="390px"
-                        className="object-cover"
-                      />
+        <div
+          className={`grid items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 ${cover ? 'lg:grid-cols-2' : ''}`}
+        >
+          <div className="flex min-w-0 flex-col pl-inset">
+            <h1 className="m-0 text-h1 leading-none font-bold text-black">
+              <Mask delay={80} innerClassName="-mb-[.22em] pb-[.22em]">
+                {project.title}
+              </Mask>
+            </h1>
+            {project.description && (
+              <Reveal
+                as="p"
+                delay={200}
+                className="mt-7 mb-0 max-w-[1080px] text-base leading-[1.38] text-pretty text-black"
+              >
+                {project.description}
+              </Reveal>
+            )}
+            {techs.length > 0 && (
+              <>
+                <h2 className="mt-10 mb-0 text-[28px] md:text-4xl leading-[1.3] font-medium text-navy">
+                  <Mask>{t.build}</Mask>
+                </h2>
+                <div className="mt-[22px] flex min-h-[72px] flex-wrap items-center gap-x-[22px] gap-y-[18px]">
+                  {techs.map((tech, i) => (
+                    <Reveal key={tech.id} as="span" type="wipe" delay={100 + i * 90}>
+                      <TechLogo tech={tech} />
                     </Reveal>
                   ))}
                 </div>
-              ) : (
-                <Reveal
-                  type="wipe"
-                  delay={100}
-                  className="mt-[22px] flex min-h-[72px] flex-wrap items-center gap-x-[22px] gap-y-[18px]"
-                >
-                  {techs.map((tech) => (
-                    <TechLogo key={tech.id} tech={tech} />
-                  ))}
-                </Reveal>
-              )}
-            </>
+              </>
+            )}
+          </div>
+
+          {cover && (
+            <Reveal type="scale" delay={150} className="relative aspect-[929/603] w-full">
+              <LaptopFrame
+                src={cover}
+                alt={project.title}
+                sizes="(max-width: 1024px) 90vw, 50vw"
+                priority
+              />
+            </Reveal>
           )}
         </div>
 

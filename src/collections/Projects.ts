@@ -7,7 +7,7 @@ export const Projects: CollectionConfig = {
   slug: 'projects',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'year', 'type', 'status', 'featured', 'order'],
+    defaultColumns: ['title', 'year', 'type', 'status', 'order'],
     group: 'Content',
   },
   defaultSort: 'order',
@@ -28,12 +28,6 @@ export const Projects: CollectionConfig = {
         position: 'sidebar',
         description: 'Order on Home and All Projects; "Next Project" follows it',
       },
-    },
-    {
-      name: 'featured',
-      type: 'checkbox',
-      defaultValue: false,
-      admin: { position: 'sidebar', description: 'Show in the horizontal slider on Home' },
     },
 
     // ── Core ────────────────────────────────────────────────
@@ -91,18 +85,6 @@ export const Projects: CollectionConfig = {
       relationTo: 'technologies',
       hasMany: true,
     },
-    {
-      name: 'buildWith',
-      type: 'upload',
-      relationTo: 'media',
-      hasMany: true,
-      maxRows: 2,
-      label: 'Build with (images)',
-      admin: {
-        description:
-          'Stack images next to "Build with." (390×72). Falls back to the technology logos.',
-      },
-    },
 
     // ── Case study ──────────────────────────────────────────
     {
@@ -110,11 +92,8 @@ export const Projects: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'problem', type: 'textarea', localized: true },
-        { name: 'problemImage', type: 'upload', relationTo: 'media' },
         { name: 'solution', type: 'textarea', localized: true },
-        { name: 'solutionImage', type: 'upload', relationTo: 'media' },
         { name: 'outcome', type: 'textarea', localized: true },
-        { name: 'outcomeImage', type: 'upload', relationTo: 'media' },
       ],
     },
 
@@ -128,8 +107,13 @@ export const Projects: CollectionConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'desktop', type: 'upload', relationTo: 'media' },
-            { name: 'mobile', type: 'upload', relationTo: 'media' },
+            { name: 'desktop', type: 'upload', relationTo: 'media', required: true },
+            {
+              name: 'mobile',
+              type: 'upload',
+              relationTo: 'media',
+              admin: { description: 'Optional – without it the phone mockup is hidden' },
+            },
           ],
         },
       ],

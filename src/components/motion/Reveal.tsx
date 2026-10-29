@@ -37,7 +37,11 @@ const states = {
   up: ['opacity-0 translate-y-10', 'opacity-100'],
   scale: ['opacity-0 scale-[1.08] origin-[50%_30%]', 'opacity-100 origin-[50%_30%]'],
   pop: ['opacity-0 scale-[.4] -rotate-45', 'opacity-100'],
-  wipe: ['[clip-path:inset(0_100%_0_0)]', '[clip-path:inset(0_0_0_0)]'],
+  // Revealed state clips well outside the box so hover tooltips above the content stay visible
+  wipe: [
+    '[clip-path:inset(-80px_100%_-80px_-200px)]',
+    '[clip-path:inset(-80px_-200px_-80px_-200px)]',
+  ],
 } as const
 
 type Tag = 'div' | 'span' | 'p' | 'article' | 'li'
