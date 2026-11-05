@@ -200,17 +200,17 @@ Nach ungefähr einer Minute sollte `https://<DOMAIN>` mit gültigem Zertifikat l
 
 ## 9. Inhalte per Seed einspielen
 
-Der Seed füllt die leere Seite mit fertigen Inhalten (Englisch und Deutsch):
+Der Seed füllt die Seite mit allen Inhalten (Englisch und Deutsch). Die Daten liegen in `src/seed/`, die Bilder in `seed-assets/`:
 
-| Teil | Inhalt |
-|---|---|
-| Technologies | alle 54 Technologien mit Logos |
-| Media | dein Porträt (`seed-assets/hero.png`) |
-| `home` | Hero (Rolle, Zahlen, Intro, Porträt), About-Texte, die 4 Services, Stack-Gruppen, Projects-Intro |
-| `site-settings` | Name, Telefon, E-Mail, Kontakt-Überschrift, SEO-Titel und -Beschreibung, Vorschaubild für geteilte Links |
-| `cv` | deine Lebenslauf-PDFs, falls vorhanden (siehe unten) |
+| Teil | Datei | Inhalt |
+|---|---|---|
+| Technologies | `src/seed/technologies.ts` | 54 Technologien mit Logos, dazu die 4 Stack-Gruppen auf Home (Frontend, Backend, Database, Tools & Deploy) |
+| Projects | `src/seed/projects.ts` | TradePortal, Budgetly, Quillly, PlanIt, Operon, TradePortal Figma inkl. Case Study und Screenshots (`seed-assets/projects/<slug>/`) |
+| Experiences | `src/seed/experiences.ts` | Feratel, 2× Elin (Work) und HTL, PTS, Mittelschule, Volksschule (Education) |
+| `home`, `site-settings` | `src/seed/globals.ts` | Hero, About, Services, Stack, Projects-Intro; Name, Kontakt, SEO |
+| `cv` | `src/seed/cv.ts` | Lebenslauf-PDFs, falls vorhanden (siehe unten) |
 
-**Projects und Experiences spielt der Seed standardmäßig nicht ein**, denn dort stehen nur Platzhalter. Die trägst du im Admin ein oder übernimmst sie aus deiner lokalen DB (Schritt 10).
+> **Achtung:** Jeder Lauf **startet bei null**: Projects, Experiences, Technologies, Media und CV werden vorher komplett gelöscht (auch die Dateien im S3) und neu angelegt. Was du im Admin daran geändert oder hochgeladen hast, ist danach weg. Users und Kontaktanfragen bleiben unberührt.
 
 ### 9.1 CV-PDFs bereitlegen (optional)
 
@@ -218,11 +218,10 @@ Die PDFs sind absichtlich nicht im Git-Repo, weil es öffentlich ist. Kopiere si
 
 ```bash
 # auf dem Mac
-scp Lebenslauf_EN.pdf root@<server-ip>:/opt/portfolio/seed-assets/cv/cv-en.pdf
-scp Lebenslauf_DE.pdf root@<server-ip>:/opt/portfolio/seed-assets/cv/cv-de.pdf
+scp seed-assets/cv/cv-en.pdf root@<server-ip>:/opt/portfolio/seed-assets/cv/cv-en.pdf
 ```
 
-Die Namen müssen genau `cv-en.pdf` und `cv-de.pdf` sein. Eine der beiden Dateien reicht. Auf der englischen Seite wird dann `cv-en.pdf` verlinkt, auf der deutschen `cv-de.pdf`. Gibt es nur eine, wird sie in beiden Sprachen verlinkt.
+Die Namen müssen genau `cv-en.pdf` bzw. `cv-de.pdf` sein. Gibt es nur eine Datei, wird sie in beiden Sprachen verlinkt.
 
 ### 9.2 Seed ausführen
 
@@ -233,32 +232,18 @@ cd /opt/portfolio/deploy
 docker compose run --rm --build seed
 ```
 
-Beim ersten Mal wird dafür ein eigenes Image gebaut (ein paar Minuten). Am Ende steht in der Ausgabe ungefähr:
+Am Ende steht in der Ausgabe:
 
 ```
 Seeded 54 technologies
-Seeded 1 media files
+Seeded 6 projects
+Seeded 7 experiences
 Seeded global: home
 Seeded global: site-settings
 Seeded 1 CV files
 ```
 
-Danach `https://<DOMAIN>` neu laden, die Inhalte sind sofort da.
-
-### 9.3 Nur einzelne Teile einspielen
-
-Mit `SEED_ONLY` wählst du die Teile aus, durch Komma getrennt. Technologien und Porträt laufen immer mit.
-
-```bash
-docker compose run --rm -e SEED_ONLY=cv seed                  # nur neue CV-PDFs
-docker compose run --rm -e SEED_ONLY=home,site-settings seed  # nur die Texte
-docker compose run --rm -e SEED_ONLY=technologies seed        # nur Technologien
-docker compose run --rm -e SEED_ONLY=projects,experiences seed  # Platzhalter-Projekte/-Erfahrungen
-```
-
-> **Achtung:** Der Seed **überschreibt** die Teile, die er einspielt, mit dem Stand aus `src/seed.ts`. Was du vorher im Admin daran geändert hast, ist danach weg. Er ist zum ersten Befüllen gedacht. Neue CV-PDFs (`SEED_ONLY=cv`) kannst du aber jederzeit einspielen, sie ersetzen die alten.
-
-Hast du nach einem `git pull` Texte in `src/seed.ts` geändert, baut `--build` das Seed-Image neu: `docker compose run --rm --build -e SEED_ONLY=home seed`.
+Lokal genügt `pnpm seed` (DB aus `db/` und S3 aus `s3bucket/` müssen laufen).
 
 ---
 
