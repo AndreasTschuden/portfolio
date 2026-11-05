@@ -30,7 +30,6 @@ export function LangToggle({ locale, label }: { locale: Locale; label: string })
     <button
       type="button"
       onClick={toggle}
-      aria-label={label}
       title={label}
       className="relative flex cursor-pointer items-center rounded-full border-0 bg-mist p-[3px] text-sm font-medium"
     >
@@ -39,6 +38,8 @@ export function LangToggle({ locale, label }: { locale: Locale; label: string })
           shown === 'de' ? 'translate-x-[38px]' : 'translate-x-0'
         }`}
       />
+      {/* Accessible name "Switch to English: EN DE" contains the visible text */}
+      <span className="sr-only">{label}: </span>
       <span className={item('en')}>EN</span>
       <span className={item('de')}>DE</span>
     </button>

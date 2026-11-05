@@ -17,6 +17,12 @@ import type { Technology } from '@/payload-types'
 type Props = PageProps<'/[locale]/projects/[slug]'>
 
 /** The project plus the one after it (by `order`, wrapping around to the first). */
+/** Search engines show about 160 characters; cut at a word boundary. */
+const metaDescription = (text?: string | null) => {
+  if (!text || text.length <= 160) return text ?? undefined
+  return text.slice(0, 157).replace(/\s+\S*$/, '') + '…'
+}
+
 async function findProject(locale: Locale, slug: string) {
   const projects = await getProjects(locale)
   const i = projects.findIndex((p) => p.slug === slug)
@@ -32,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale)) return {}
   const found = await findProject(locale, slug)
   if (!found) return {}
-  return { title: found.project.title, description: found.project.description ?? undefined }
+  return { title: found.project.title, description: metaDescription(found.project.description) }
 }
 
 export default async function ProjectPage({ params }: Props) {
@@ -61,69 +67,69 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <div>
       <Header locale={locale} t={m.nav} back={{ fallbackHref: `${base}/projects` }} />
+      <main id="main">
+        <section className="px-gutter pt-[140px] md:pt-[190px]">
+          <div
+            className={`grid items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 ${cover ? 'lg:grid-cols-2' : ''}`}
+          >
+            <div className="flex min-w-0 flex-col pl-inset">
+              <h1 className="m-0 text-h1 leading-none font-bold text-black">
+                <Mask delay={80}>{project.title}</Mask>
+              </h1>
+              {project.description && (
+                <Reveal
+                  as="p"
+                  delay={200}
+                  className="mt-7 mb-0 max-w-[1080px] text-base leading-[1.38] text-pretty text-black"
+                >
+                  {project.description}
+                </Reveal>
+              )}
+              {techs.length > 0 && (
+                <>
+                  <h2 className="mt-10 mb-0 text-[28px] md:text-4xl leading-[1.3] font-medium text-navy">
+                    <Mask>{t.build}</Mask>
+                  </h2>
+                  <div className="mt-[22px] flex min-h-[72px] flex-wrap items-center gap-x-[22px] gap-y-[18px]">
+                    {techs.map((tech, i) => (
+                      <Reveal key={tech.id} as="span" type="wipe" delay={100 + i * 90}>
+                        <TechLogo tech={tech} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
 
-      <section className="px-gutter pt-[140px] md:pt-[190px]">
-        <div
-          className={`grid items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 ${cover ? 'lg:grid-cols-2' : ''}`}
-        >
-          <div className="flex min-w-0 flex-col pl-inset">
-            <h1 className="m-0 text-h1 leading-none font-bold text-black">
-              <Mask delay={80}>{project.title}</Mask>
-            </h1>
-            {project.description && (
-              <Reveal
-                as="p"
-                delay={200}
-                className="mt-7 mb-0 max-w-[1080px] text-base leading-[1.38] text-pretty text-black"
-              >
-                {project.description}
+            {cover && (
+              <Reveal type="scale" delay={150} className="w-full">
+                <LaptopFrame
+                  image={cover}
+                  alt={project.title}
+                  sizes="(max-width: 1024px) 90vw, 50vw"
+                  priority
+                />
               </Reveal>
-            )}
-            {techs.length > 0 && (
-              <>
-                <h2 className="mt-10 mb-0 text-[28px] md:text-4xl leading-[1.3] font-medium text-navy">
-                  <Mask>{t.build}</Mask>
-                </h2>
-                <div className="mt-[22px] flex min-h-[72px] flex-wrap items-center gap-x-[22px] gap-y-[18px]">
-                  {techs.map((tech, i) => (
-                    <Reveal key={tech.id} as="span" type="wipe" delay={100 + i * 90}>
-                      <TechLogo tech={tech} />
-                    </Reveal>
-                  ))}
-                </div>
-              </>
             )}
           </div>
 
-          {cover && (
-            <Reveal type="scale" delay={150} className="w-full">
-              <LaptopFrame
-                image={cover}
-                alt={project.title}
-                sizes="(max-width: 1024px) 90vw, 50vw"
-                priority
-              />
-            </Reveal>
-          )}
-        </div>
-
-        {cases.some((c) => c.text) && <CaseCards cases={cases} />}
-      </section>
-
-      {screens.length > 0 && <ScreenSlider screens={screens} t={t} />}
-
-      {next && (
-        <section className="px-gutter pt-24 md:pt-[150px]">
-          <NextTeaser
-            href={`${base}/projects/${next.slug}`}
-            label={t.nextProject}
-            title={next.title}
-            labelClassName="text-steel"
-          />
+          {cases.some((c) => c.text) && <CaseCards cases={cases} />}
         </section>
-      )}
 
-      <Footer name={site.name ?? ''} />
+        {screens.length > 0 && <ScreenSlider screens={screens} t={t} />}
+
+        {next && (
+          <section className="px-gutter pt-24 md:pt-[150px]">
+            <NextTeaser
+              href={`${base}/projects/${next.slug}`}
+              label={t.nextProject}
+              title={next.title}
+              labelClassName="text-steel"
+            />
+          </section>
+        )}
+      </main>
+      <Footer locale={locale} site={site} t={m.footer} nav={m.nav} />
     </div>
   )
 }

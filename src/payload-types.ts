@@ -753,6 +753,10 @@ export interface SiteSetting {
   name?: string | null;
   phone?: string | null;
   email?: string | null;
+  /**
+   * Place of residence for the imprint (§ 25 MedienG), e.g. Villach, Austria
+   */
+  location?: string | null;
   contactHeadline?:
     | {
         line?: string | null;
@@ -824,6 +828,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   name?: T;
   phone?: T;
   email?: T;
+  location?: T;
   contactHeadline?:
     | T
     | {

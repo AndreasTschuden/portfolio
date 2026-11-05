@@ -19,6 +19,14 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
     {
+      name: 'location',
+      type: 'text',
+      localized: true,
+      admin: {
+        description: 'Place of residence for the imprint (§ 25 MedienG), e.g. Villach, Austria',
+      },
+    },
+    {
       name: 'contactHeadline',
       type: 'array',
       fields: [{ name: 'line', type: 'text', localized: true }],

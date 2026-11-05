@@ -40,11 +40,17 @@
     "solo": "Solo",
     "people": "people",
     "nextLabel": "Where I learned it",
-    "next": "Experience"
+    "next": "Experience",
+    "description": "All projects by Andreas Tschuden: web apps, Figma prototypes and full-stack applications built with Next.js, Angular, NestJS and Laravel.",
+    "booklet": "Projects as PDF"
   },
   "project": {
     "build": "Build with.",
-    "cases": ["Problem", "Solution", "Outcome"],
+    "cases": [
+      "Problem",
+      "Solution",
+      "Outcome"
+    ],
     "look": "A look inside.",
     "prev": "Previous screen",
     "next": "Next screen",
@@ -56,10 +62,80 @@
     "title": "Experience",
     "intro": "Internships and school. Every station taught me something about building products end‑to‑end, from the first wireframe to the deployed back‑end.",
     "learned": "What I learned",
-    "kinds": { "tech": "Technical", "soft": "Soft skill", "process": "Workflow" },
-    "types": { "work": "Work", "edu": "Education" },
+    "kinds": {
+      "tech": "Technical",
+      "soft": "Soft skill",
+      "process": "Workflow"
+    },
+    "types": {
+      "work": "Work",
+      "edu": "Education"
+    },
     "now": "Today",
     "nextLabel": "See what came out of it",
-    "next": "Projects"
+    "next": "Projects",
+    "description": "Internships and education of Andreas Tschuden: Elin, feratel and HTL Villach with a focus on advanced web development."
+  },
+  "footer": {
+    "tagline": "Software that feels as good as it works.",
+    "navigation": "Navigation",
+    "contact": "Contact",
+    "imprint": "Imprint",
+    "top": "Back to top",
+    "rights": "All rights reserved."
+  },
+  "imprint": {
+    "title": "Imprint.",
+    "intro": "Information according to § 5 of the Austrian E-Commerce Act and disclosure according to § 25 of the Austrian Media Act.",
+    "owner": "Media owner",
+    "contact": "Contact",
+    "email": "Email",
+    "phone": "Phone",
+    "sections": [
+      {
+        "title": "Purpose",
+        "text": "Personal portfolio. This website presents my projects, my experience and my skills as a developer and designer. It does not serve any commercial purpose."
+      },
+      {
+        "title": "Liability for content",
+        "text": "The content of this website was created with great care. However, I cannot guarantee that it is correct, complete or up to date."
+      },
+      {
+        "title": "Liability for links",
+        "text": "This website links to external websites whose content I have no control over. The respective provider is always responsible for that content. If I become aware of any legal violations, I will remove the affected links immediately."
+      },
+      {
+        "title": "Copyright",
+        "text": "Texts, designs, screenshots and code on this website are subject to Austrian copyright law. Any use beyond the limits of copyright law requires my written consent."
+      },
+      {
+        "title": "Contact form",
+        "text": "When you write to me through the contact form, I store your name, email address and message only to answer your request. The data is not passed on to third parties."
+      }
+    ],
+    "nextLabel": "Any questions?",
+    "next": "Get in touch",
+    "description": "Imprint and disclosure according to § 25 of the Austrian Media Act for the portfolio of Andreas Tschuden."
+  },
+  "booklet": {
+    "title": "Project booklet.",
+    "coverTitle": "Projects.",
+    "portfolio": "Portfolio",
+    "count": "Projects",
+    "aboutLabel": "About this booklet",
+    "intro": "A selection of my work, from the first idea in Figma to the deployed application. Every project on one spread: what it is about, what it is built with and what came out of it.",
+    "contents": "Contents.",
+    "project": "Project",
+    "build": "Build with.",
+    "live": "Live",
+    "repo": "Code",
+    "contact": "Contact",
+    "prev": "Previous page",
+    "next": "Next page",
+    "page": "Page",
+    "of": "of",
+    "download": "Save as PDF",
+    "hint": "Click, swipe or use the arrow keys to turn pages",
+    "description": "All projects by Andreas Tschuden as a booklet to flip through, also as a PDF to save."
   }
 }

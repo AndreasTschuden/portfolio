@@ -75,7 +75,7 @@ export function ScreenSlider({ screens, t }: Props) {
     'flex size-14 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-black shadow-[inset_0_0_0_1px_rgb(0_0_0)] [transition:box-shadow_.3s,color_.3s,background-color_.3s] enabled:hover:bg-mist sm:size-[75px] disabled:cursor-default disabled:text-haze disabled:shadow-[inset_0_0_0_1px_var(--color-haze)]'
 
   return (
-    <section className="px-gutter pt-20 md:pt-[75px]">
+    <section className="overflow-x-clip px-gutter pt-20 md:pt-[75px]">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-4">
         <h2 className="m-0 text-[clamp(40px,4.17vw,60px)] leading-[1.35] font-medium whitespace-nowrap text-black">
           <Mask>{t.look}</Mask>

@@ -15,7 +15,7 @@ export function ScrollProgress() {
     <div
       ref={ref}
       aria-hidden
-      className="fixed inset-x-0 top-0 z-60 h-0.5 origin-left bg-navy"
+      className="fixed inset-x-0 top-0 z-60 print:hidden h-0.5 origin-left bg-navy"
       style={{ transform: 'scaleX(0)' }}
     />
   )

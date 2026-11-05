@@ -13,7 +13,8 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/experience'>): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
-  return { title: getMessages(locale).experience.title }
+  const t = getMessages(locale).experience
+  return { title: t.title.replace(/\.$/, ''), description: t.description }
 }
 
 export default async function ExperiencePage({ params }: PageProps<'/[locale]/experience'>) {
@@ -45,11 +46,13 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
   return (
     <div>
       <Header locale={locale} t={m.nav} back={{ fallbackHref: `${base}#about` }} />
-      <ExperienceView entries={entries} t={t} />
-      <section className="px-gutter pt-[60px]">
-        <NextTeaser href={`${base}#projects`} label={t.nextLabel} title={t.next} />
-      </section>
-      <Footer name={site.name ?? ''} />
+      <main id="main">
+        <ExperienceView entries={entries} t={t} />
+        <section className="px-gutter pt-[60px]">
+          <NextTeaser href={`${base}#projects`} label={t.nextLabel} title={t.next} />
+        </section>
+      </main>
+      <Footer locale={locale} site={site} t={m.footer} nav={m.nav} />
     </div>
   )
 }

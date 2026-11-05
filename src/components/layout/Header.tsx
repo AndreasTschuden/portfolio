@@ -9,13 +9,10 @@ import type { Locale, Messages } from '@/i18n'
 import { ArrowUpRight, Logo } from '../icons'
 import { useScrollFrame } from '../motion/useScrollFrame'
 import { BackButton } from './BackButton'
+import { hoverUnderline } from './hover-underline'
 import { recordPath } from './history'
 import { LangToggle } from './LangToggle'
 import { MenuButton, MobileMenu } from './MobileMenu'
-
-/** Underline that grows from the left on hover. */
-const hoverUnderline =
-  'bg-[linear-gradient(currentColor,currentColor)] bg-no-repeat bg-position-[0_100%] bg-size-[0%_1px] transition-[background-size] duration-400 ease-soft hover:bg-size-[100%_1px]'
 
 type Props = {
   locale: Locale

@@ -40,11 +40,17 @@
     "solo": "Solo",
     "people": "Personen",
     "nextLabel": "Wo ich es gelernt habe",
-    "next": "Erfahrung"
+    "next": "Erfahrung",
+    "description": "Alle Projekte von Andreas Tschuden: Web-Apps, Figma-Prototypen und Full-Stack-Anwendungen mit Next.js, Angular, NestJS und Laravel.",
+    "booklet": "Projekte als PDF"
   },
   "project": {
     "build": "Gebaut mit.",
-    "cases": ["Problem", "Lösung", "Ergebnis"],
+    "cases": [
+      "Problem",
+      "Lösung",
+      "Ergebnis"
+    ],
     "look": "Ein Blick hinein.",
     "prev": "Vorheriger Screen",
     "next": "Nächster Screen",
@@ -56,10 +62,80 @@
     "title": "Erfahrung.",
     "intro": "Praktika und Schule. Jede Station hat mir etwas darüber beigebracht, Produkte durchgängig zu bauen, vom ersten Wireframe bis zum deployten Backend.",
     "learned": "Was ich gelernt habe",
-    "kinds": { "tech": "Technik", "soft": "Soft Skill", "process": "Arbeitsweise" },
-    "types": { "work": "Arbeit", "edu": "Ausbildung" },
+    "kinds": {
+      "tech": "Technik",
+      "soft": "Soft Skill",
+      "process": "Arbeitsweise"
+    },
+    "types": {
+      "work": "Arbeit",
+      "edu": "Ausbildung"
+    },
     "now": "Heute",
     "nextLabel": "Was dabei entstanden ist",
-    "next": "Projekte"
+    "next": "Projekte",
+    "description": "Praktika und Ausbildung von Andreas Tschuden: Elin, feratel und die HTL Villach mit Schwerpunkt Advanced Web Development."
+  },
+  "footer": {
+    "tagline": "Software, die sich so gut anfühlt, wie sie funktioniert.",
+    "navigation": "Navigation",
+    "contact": "Kontakt",
+    "imprint": "Impressum",
+    "top": "Nach oben",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "imprint": {
+    "title": "Impressum.",
+    "intro": "Informationen gemäß § 5 E-Commerce-Gesetz und Offenlegung gemäß § 25 Mediengesetz.",
+    "owner": "Medieninhaber",
+    "contact": "Kontakt",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "sections": [
+      {
+        "title": "Grundlegende Richtung",
+        "text": "Persönliches Portfolio. Diese Website stellt meine Projekte, meine Erfahrung und meine Fähigkeiten als Entwickler und Designer vor. Sie verfolgt keine kommerziellen Zwecke."
+      },
+      {
+        "title": "Haftung für Inhalte",
+        "text": "Die Inhalte dieser Website wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität kann ich jedoch keine Gewähr übernehmen."
+      },
+      {
+        "title": "Haftung für Links",
+        "text": "Diese Website enthält Links zu externen Websites, auf deren Inhalte ich keinen Einfluss habe. Für diese Inhalte ist stets der jeweilige Anbieter verantwortlich. Werden mir Rechtsverletzungen bekannt, entferne ich die betroffenen Links umgehend."
+      },
+      {
+        "title": "Urheberrecht",
+        "text": "Texte, Designs, Screenshots und Code auf dieser Website unterliegen dem österreichischen Urheberrecht. Jede Verwendung außerhalb der Grenzen des Urheberrechts bedarf meiner schriftlichen Zustimmung."
+      },
+      {
+        "title": "Kontaktformular",
+        "text": "Wenn du mir über das Kontaktformular schreibst, speichere ich Name, E-Mail-Adresse und Nachricht ausschließlich, um deine Anfrage zu beantworten. Die Daten werden nicht an Dritte weitergegeben."
+      }
+    ],
+    "nextLabel": "Noch Fragen?",
+    "next": "Kontakt",
+    "description": "Impressum und Offenlegung gemäß § 25 Mediengesetz für das Portfolio von Andreas Tschuden."
+  },
+  "booklet": {
+    "title": "Projektheft.",
+    "coverTitle": "Projekte.",
+    "portfolio": "Portfolio",
+    "count": "Projekte",
+    "aboutLabel": "Über dieses Heft",
+    "intro": "Eine Auswahl meiner Arbeiten, von der ersten Idee in Figma bis zur deployten Anwendung. Jedes Projekt auf einer Doppelseite: worum es geht, womit es gebaut ist und was dabei herauskam.",
+    "contents": "Inhalt.",
+    "project": "Projekt",
+    "build": "Gebaut mit.",
+    "live": "Live",
+    "repo": "Code",
+    "contact": "Kontakt",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "page": "Seite",
+    "of": "von",
+    "download": "Als PDF speichern",
+    "hint": "Klicken, wischen oder Pfeiltasten zum Blättern",
+    "description": "Alle Projekte von Andreas Tschuden als blätterbares Heft, auch als PDF zum Speichern."
   }
 }

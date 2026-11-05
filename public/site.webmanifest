@@ -1,16 +1,21 @@
 {
-  "name": "Andreas Tschuden — Fullstack Developer",
-  "short_name": "AT Portfolio",
-  "description": "Fullstack developer based in Villach, Austria. Portfolio, work, experience and contact.",
+  "name": "Andreas Tschuden · Fullstack Developer & UI/UX Designer",
+  "short_name": "Andreas Tschuden",
+  "description": "Portfolio of Andreas Tschuden, full-stack developer and UI/UX designer from Carinthia, Austria.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0A0D12",
-  "theme_color": "#74D0F1",
+  "background_color": "#FFFFFF",
+  "theme_color": "#112A46",
   "icons": [
     {
       "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

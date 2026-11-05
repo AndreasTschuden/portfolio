@@ -92,10 +92,8 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
         </div>
         <div>
           <div ref={helloRef} className="will-change-transform">
-            <h1
-              aria-label={hello}
-              className="m-0 -ml-[0.04em] flex text-hello leading-[.86] font-normal tracking-[-0.02em] whitespace-nowrap text-navy max-sm:text-[60px]"
-            >
+            <h1 className="m-0 -ml-[0.04em] flex text-hello leading-[.86] font-normal tracking-[-0.02em] whitespace-nowrap text-navy max-sm:text-[60px]">
+              <span className="sr-only">{hello}</span>
               {[...hello].map((char, i) => (
                 <Mask key={i} delay={100 + i * 70} className="inline-block">
                   <span aria-hidden>{char}</span>
@@ -103,7 +101,11 @@ export function Hero({ role, year, stats, hello, intro, scrollDown, portrait }: 
               ))}
             </h1>
           </div>
-          <Reveal as="p" delay={700} className="mt-[18px] mb-0 text-xl text-pretty text-black max-sm:mt-3 max-sm:text-base">
+          <Reveal
+            as="p"
+            delay={700}
+            className="mt-[18px] mb-0 text-xl text-pretty text-black max-sm:mt-3 max-sm:text-base"
+          >
             {intro.split('**').map((part, i) =>
               i % 2 ? (
                 <strong key={i} className="font-medium">

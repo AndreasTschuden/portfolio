@@ -86,7 +86,7 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                 }`}
               >
                 {t.types[k]}
-                <span className="font-mono text-xs opacity-60">
+                <span className="font-mono text-xs opacity-75">
                   {pad(entries.filter((e) => e.type === k).length)}
                 </span>
               </button>
@@ -121,7 +121,7 @@ export function ExperienceView({ entries, t }: { entries: Entry[]; t: Messages['
                 <Reveal className="col-start-2 row-start-1 flex flex-col gap-1.5 self-start md:sticky md:top-[130px] md:col-start-1">
                   <span
                     className={`text-[clamp(44px,5.55vw,80px)] leading-none font-medium tabular-nums transition-colors duration-500 ${
-                      a ? 'text-navy' : 'text-haze'
+                      a ? 'text-navy' : 'text-steel'
                     }`}
                   >
                     {e.year}

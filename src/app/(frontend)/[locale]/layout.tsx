@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
@@ -9,6 +10,17 @@ import { getSiteSettings } from '@/lib/payload'
 import { mediaSrc } from '@/lib/media'
 
 import '../globals.css'
+
+// Self-hosted: next/font serves both fonts from this site, no request goes to a font server.
+const satoshi = localFont({
+  src: [
+    { path: '../fonts/satoshi-400.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/satoshi-500.woff2', weight: '500', style: 'normal' },
+    { path: '../fonts/satoshi-700.woff2', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-satoshi',
+  display: 'swap',
+})
 
 const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
@@ -28,10 +40,13 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
     metadataBase: process.env.NEXT_PUBLIC_SITE_URL
       ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
       : undefined,
-    title: seo?.title || name || 'Portfolio',
+    title: {
+      default: seo?.title || name || 'Portfolio',
+      template: `%s · ${name || 'Portfolio'}`,
+    },
     description: seo?.description ?? undefined,
     openGraph: ogImage ? { images: [ogImage] } : undefined,
-    icons: { icon: '/favicon.svg' },
+    icons: { icon: '/favicon.svg', apple: '/apple-touch-icon.png' },
     manifest: '/site.webmanifest',
   }
 }
@@ -41,15 +56,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   if (!isLocale(locale)) notFound()
 
   return (
-    <html lang={locale} className={`scroll-smooth ${jetbrains.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://api.fontshare.com" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font -- Satoshi is only on Fontshare */}
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
-        />
-      </head>
+    <html lang={locale} className={`scroll-smooth ${satoshi.variable} ${jetbrains.variable}`}>
       <body className="m-0 overflow-x-clip bg-white font-sans text-navy antialiased selection:bg-ice">
         <ScrollProgress />
         {children}

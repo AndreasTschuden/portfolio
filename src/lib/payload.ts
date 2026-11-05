@@ -14,10 +14,11 @@ export const getSiteSettings = cache(async (locale: Locale) =>
   (await payload()).findGlobal({ slug: 'site-settings', locale, depth: 1 }),
 )
 
+// depth 2 resolves the technologies' uploaded icons, so no logo comes from an external CDN.
 export const getProjects = cache(async (locale: Locale) => {
   const { docs } = await (
     await payload()
-  ).find({ collection: 'projects', locale, depth: 1, sort: 'order', limit: 100 })
+  ).find({ collection: 'projects', locale, depth: 2, sort: 'order', limit: 100 })
   return docs
 })
 
@@ -25,7 +26,7 @@ export const getProjects = cache(async (locale: Locale) => {
 export const getLatestProjects = cache(async (locale: Locale, limit = 5) => {
   const { docs } = await (
     await payload()
-  ).find({ collection: 'projects', locale, depth: 1, sort: ['-year', '-createdAt'], limit })
+  ).find({ collection: 'projects', locale, depth: 2, sort: ['-year', '-createdAt'], limit })
   return docs
 })
 

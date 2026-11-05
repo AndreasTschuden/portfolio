@@ -25,7 +25,6 @@ export function TechLogo({ tech, size = 'lg', color = '112a46', invert = false }
   return (
     <span
       className={`tap-hover group/logo relative flex ${box} items-center justify-center transition-transform duration-350 ease-soft hover:-translate-y-[3px]`}
-      aria-label={tech.name}
     >
       {custom ? (
         <span
@@ -38,7 +37,7 @@ export function TechLogo({ tech, size = 'lg', color = '112a46', invert = false }
           }}
         />
       ) : (
-        // eslint-disable-next-line @next/next/no-img-element -- external SVG from simpleicons.org
+        // eslint-disable-next-line @next/next/no-img-element -- fallback SVG from simpleicons.org
         <img
           src={techIconSrc(tech, color)}
           alt={tech.name}
@@ -46,7 +45,9 @@ export function TechLogo({ tech, size = 'lg', color = '112a46', invert = false }
           loading="lazy"
         />
       )}
+      {/* Visual tooltip only; the logo above already carries the name */}
       <span
+        aria-hidden
         className={`pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-[2] -translate-x-1/2 translate-y-1 rounded-lg px-2.5 py-[5px] font-mono text-xs whitespace-nowrap opacity-0 [transition:opacity_.25s,translate_.3s_var(--ease-soft)] group-hover/logo:translate-y-0 group-hover/logo:opacity-100 ${invert ? 'bg-white text-navy' : 'bg-navy text-white'}`}
       >
         {tech.name}

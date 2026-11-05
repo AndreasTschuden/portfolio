@@ -81,3 +81,21 @@ export const ArrowBack = (props: IconProps) => (
     <path d="M22 12H2M6 8l-4 4 4 4" />
   </svg>
 )
+
+/** Open booklet, for the "Projects as PDF" link. */
+export const BookOpen = (props: IconProps) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden
+    {...props}
+  >
+    <path d="M10 5.5C8.4 4.2 6 3.6 2.5 3.8v11.4c3.5-.2 5.9.4 7.5 1.7 1.6-1.3 4-1.9 7.5-1.7V3.8c-3.5-.2-5.9.4-7.5 1.7ZM10 5.5v11.4" />
+  </svg>
+)
