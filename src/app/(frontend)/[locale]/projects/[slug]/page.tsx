@@ -7,6 +7,7 @@ import { NextTeaser } from '@/components/layout/NextTeaser'
 import { Mask, Reveal } from '@/components/motion/Reveal'
 import { CaseCards } from '@/components/projects/CaseCards'
 import { LaptopFrame } from '@/components/projects/LaptopFrame'
+import { ProjectLinks } from '@/components/projects/ProjectLinks'
 import { ScreenSlider } from '@/components/projects/ScreenSlider'
 import { TechLogo } from '@/components/TechLogo'
 import { getMessages, isLocale, type Locale } from '@/i18n'
@@ -117,6 +118,8 @@ export default async function ProjectPage({ params }: Props) {
         </section>
 
         {screens.length > 0 && <ScreenSlider screens={screens} t={t} />}
+
+        <ProjectLinks liveUrl={project.liveUrl} repoUrl={project.repoUrl} t={t} />
 
         {next && (
           <section className="px-gutter pt-24 md:pt-[150px]">

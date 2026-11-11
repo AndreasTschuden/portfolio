@@ -56,6 +56,9 @@
     "next": "Next screen",
     "nextProject": "Next Project",
     "desktopAlt": "Desktop screenshot",
+    "links": "Links",
+    "live": "Live site",
+    "repo": "Code",
     "mobileAlt": "Mobile screenshot"
   },
   "experience": {
