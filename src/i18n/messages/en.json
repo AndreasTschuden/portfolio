@@ -45,13 +45,13 @@
     "booklet": "Projects as PDF"
   },
   "project": {
-    "build": "Build with.",
+    "build": "Built with",
     "cases": [
       "Problem",
       "Solution",
       "Outcome"
     ],
-    "look": "A look inside.",
+    "look": "A look inside",
     "prev": "Previous screen",
     "next": "Next screen",
     "nextProject": "Next Project",
@@ -85,7 +85,7 @@
     "rights": "All rights reserved."
   },
   "imprint": {
-    "title": "Imprint.",
+    "title": "Imprint",
     "intro": "Information according to § 5 of the Austrian E-Commerce Act and disclosure according to § 25 of the Austrian Media Act.",
     "owner": "Media owner",
     "contact": "Contact",
@@ -118,15 +118,13 @@
     "description": "Imprint and disclosure according to § 25 of the Austrian Media Act for the portfolio of Andreas Tschuden."
   },
   "booklet": {
-    "title": "Project booklet.",
-    "coverTitle": "Projects.",
-    "portfolio": "Portfolio",
-    "count": "Projects",
+    "title": "Project booklet",
+    "coverTitle": "Projects",
     "aboutLabel": "About this booklet",
     "intro": "A selection of my work, from the first idea in Figma to the deployed application. Every project on one spread: what it is about, what it is built with and what came out of it.",
-    "contents": "Contents.",
+    "contents": "Contents",
     "project": "Project",
-    "build": "Build with.",
+    "build": "Built with",
     "live": "Live",
     "repo": "Code",
     "contact": "Contact",

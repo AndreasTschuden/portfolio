@@ -133,7 +133,7 @@ export async function seedSiteSettings(payload: Payload, ogImage: string) {
   const headline = [
     { en: 'Want to', de: 'Lust auf' },
     { en: 'talk to me?', de: 'ein Gespräch?' },
-    { en: 'Get in touch.', de: 'Melde dich.' },
+    { en: 'Get in touch', de: 'Melde dich' },
   ]
 
   const en = await payload.updateGlobal({

@@ -33,7 +33,7 @@
     "error": "Erneut versuchen"
   },
   "projects": {
-    "title": "Alle Projekte.",
+    "title": "Alle Projekte",
     "year": "Jahr",
     "role": "Rolle",
     "team": "Team",
@@ -45,13 +45,13 @@
     "booklet": "Projekte als PDF"
   },
   "project": {
-    "build": "Gebaut mit.",
+    "build": "Gebaut mit",
     "cases": [
       "Problem",
       "Lösung",
       "Ergebnis"
     ],
-    "look": "Ein Blick hinein.",
+    "look": "Ein Blick hinein",
     "prev": "Vorheriger Screen",
     "next": "Nächster Screen",
     "nextProject": "Nächstes Projekt",
@@ -59,7 +59,7 @@
     "mobileAlt": "Mobile-Screenshot"
   },
   "experience": {
-    "title": "Erfahrung.",
+    "title": "Erfahrung",
     "intro": "Praktika und Schule. Jede Station hat mir etwas darüber beigebracht, Produkte durchgängig zu bauen, vom ersten Wireframe bis zum deployten Backend.",
     "learned": "Was ich gelernt habe",
     "kinds": {
@@ -85,7 +85,7 @@
     "rights": "Alle Rechte vorbehalten."
   },
   "imprint": {
-    "title": "Impressum.",
+    "title": "Impressum",
     "intro": "Informationen gemäß § 5 E-Commerce-Gesetz und Offenlegung gemäß § 25 Mediengesetz.",
     "owner": "Medieninhaber",
     "contact": "Kontakt",
@@ -118,15 +118,13 @@
     "description": "Impressum und Offenlegung gemäß § 25 Mediengesetz für das Portfolio von Andreas Tschuden."
   },
   "booklet": {
-    "title": "Projektheft.",
-    "coverTitle": "Projekte.",
-    "portfolio": "Portfolio",
-    "count": "Projekte",
+    "title": "Projektheft",
+    "coverTitle": "Projekte",
     "aboutLabel": "Über dieses Heft",
     "intro": "Eine Auswahl meiner Arbeiten, von der ersten Idee in Figma bis zur deployten Anwendung. Jedes Projekt auf einer Doppelseite: worum es geht, womit es gebaut ist und was dabei herauskam.",
-    "contents": "Inhalt.",
+    "contents": "Inhalt",
     "project": "Projekt",
-    "build": "Gebaut mit.",
+    "build": "Gebaut mit",
     "live": "Live",
     "repo": "Code",
     "contact": "Kontakt",
