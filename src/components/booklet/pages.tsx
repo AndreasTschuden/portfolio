@@ -56,12 +56,6 @@ const Page = ({ className = '', children }: { className?: string; children: Reac
 )
 
 export function CoverPage({ projects, site, t }: { projects: Project[]; site: Site; t: T }) {
-  const years = projects.map((p) => Number(p.year)).filter((y) => !Number.isNaN(y) && y > 0)
-  const range = years.length
-    ? Math.min(...years) === Math.max(...years)
-      ? `${Math.min(...years)}`
-      : `${Math.min(...years)}–${Math.max(...years)}`
-    : ''
   const covers = projects
     .map((p) => mediaImage(p.coverImage))
     .filter((c) => c !== null)
@@ -69,13 +63,7 @@ export function CoverPage({ projects, site, t }: { projects: Project[]; site: Si
 
   return (
     <Page className="bg-navy text-white">
-      <div className="flex items-start justify-between">
-        <Logo className="text-white" />
-        <Label className="text-mist/60">
-          {t.portfolio}
-          {range && ` — ${range}`}
-        </Label>
-      </div>
+      <Logo className="text-white" />
 
       {/* Fanned cover images, like cards laid on a table */}
       <div className="relative mt-[48px] h-[300px]">
@@ -105,9 +93,6 @@ export function CoverPage({ projects, site, t }: { projects: Project[]; site: Si
       </div>
 
       <div className="mt-auto flex flex-col gap-3">
-        <Label className="text-mist/60">
-          {pad(projects.length)} {t.count}
-        </Label>
         <h1 className="m-0 text-[78px] leading-[.92] font-bold tracking-[-.01em]">
           {t.coverTitle}
         </h1>
@@ -176,12 +161,13 @@ export function ContentsPage({
   )
 }
 
-/** Left page of a project spread: themed like the project card, with cover, intro and meta. */
-export function ProjectVisualPage({
+/** Left page of a project spread: everything there is to read about the project. */
+export function ProjectTextPage({
   project,
   index,
   total,
   projectsT,
+  projectT,
   t,
   n,
 }: {
@@ -189,73 +175,15 @@ export function ProjectVisualPage({
   index: number
   total: number
   projectsT: Messages['projects']
-  t: T
-  n: number
-}) {
-  const theme = cardTheme(index)
-  const cover = mediaImage(project.coverImage)
-  const meta = [
-    [projectsT.year, project.year],
-    [projectsT.role, project.role],
-    [projectsT.team, teamLabel(project.teamSize, projectsT)],
-  ]
-
-  return (
-    <Page className={`${theme.bg} ${theme.ink}`}>
-      <Label className="opacity-70">
-        {t.project} {pad(index + 1)} / {pad(total)}
-      </Label>
-      <div
-        className={`relative mt-[22px] w-full overflow-hidden rounded-[14px] ${theme.img}`}
-        style={{ aspectRatio: cover?.ratio ?? 658 / 422, maxHeight: 300 }}
-      >
-        {cover && (
-          <Image
-            src={cover.src}
-            alt=""
-            fill
-            sizes="900px"
-            loading="eager"
-            className="object-cover"
-          />
-        )}
-        <span
-          className={`absolute right-[16px] bottom-[8px] text-[72px] leading-[.8] font-bold ${theme.num}`}
-        >
-          {pad(index + 1)}
-        </span>
-      </div>
-      <h2 className="m-0 mt-[28px] text-[32px] leading-[1.1] font-bold">{project.title}</h2>
-      {project.description && (
-        <p className="mt-[14px] mb-0 text-[12px] leading-[1.5] text-pretty">
-          {project.description}
-        </p>
-      )}
-      <div className="mt-auto grid grid-cols-3 gap-4 border-t border-current/15 pt-[16px]">
-        {meta.map(([label, value]) => (
-          <div key={label} className="flex flex-col gap-1">
-            <span className="text-[10px] opacity-70">{label}</span>
-            <span className="text-[12.5px] font-medium">{value}</span>
-          </div>
-        ))}
-      </div>
-      <Folio n={n} side="left" className="opacity-60" />
-    </Page>
-  )
-}
-
-/** Right page of a project spread: stack, case study and links. */
-export function ProjectDetailsPage({
-  project,
-  projectT,
-  t,
-  n,
-}: {
-  project: Project
   projectT: Messages['project']
   t: T
   n: number
 }) {
+  const meta = [
+    [projectsT.year, project.year],
+    [projectsT.role, project.role],
+    [projectsT.team, teamLabel(project.teamSize, projectsT)],
+  ].filter(([, value]) => value)
   const techs = populatedList<Technology>(project.technologies)
   const cs = project.caseStudy
   const cases = [cs?.problem, cs?.solution, cs?.outcome]
@@ -268,31 +196,51 @@ export function ProjectDetailsPage({
 
   return (
     <Page className="bg-white text-navy">
+      <Label className="text-steel">
+        {t.project} {pad(index + 1)} / {pad(total)}
+      </Label>
+      <h2 className="m-0 mt-[14px] text-[28px] leading-[1.1] font-bold text-black">
+        {project.title}
+      </h2>
+      {project.description && (
+        <p className="mt-[10px] mb-0 text-[11px] leading-[1.5] text-pretty text-black/80">
+          {project.description}
+        </p>
+      )}
+
+      {meta.length > 0 && (
+        <div className="mt-[16px] grid grid-cols-3 gap-4 border-t border-line pt-[10px]">
+          {meta.map(([label, value]) => (
+            <div key={label} className="flex flex-col gap-[3px]">
+              <span className="text-[9.5px] text-steel">{label}</span>
+              <span className="text-[11.5px] font-medium">{value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {techs.length > 0 && (
-        <>
-          <h3 className="m-0 text-[20px] leading-[1.2] font-medium text-navy">{t.build}</h3>
-          <ul className="m-0 mt-[12px] flex list-none flex-wrap gap-[6px] p-0">
+        <div className="mt-[16px] border-t border-line pt-[10px]">
+          <h3 className="m-0 text-[15px] leading-[1.2] font-medium">{t.build}</h3>
+          <ul className="m-0 mt-[10px] flex list-none flex-wrap gap-x-[14px] gap-y-[8px] p-0">
             {techs.map((tech) => (
-              <li
-                key={tech.id}
-                className="flex items-center gap-[6px] rounded-full bg-mist py-[4px] pr-[10px] pl-[7px] text-[10px] text-navy"
-              >
+              <li key={tech.id} className="flex items-center gap-[6px] text-[10px] leading-none">
                 <TechIcon tech={tech} />
                 {tech.name}
               </li>
             ))}
           </ul>
-        </>
+        </div>
       )}
 
-      <div className="mt-[22px] flex flex-col gap-[14px]">
+      <div className="mt-[16px] flex flex-col gap-[10px]">
         {cases.map((c, k) => (
-          <section key={c.title} className="border-t border-line pt-[11px]">
+          <section key={c.title} className="border-t border-line pt-[9px]">
             <div className="flex items-baseline gap-[10px]">
-              <span className="font-mono text-[10px] text-steel">{pad(k + 1)}</span>
-              <h4 className="m-0 text-[15px] font-medium text-navy">{c.title}</h4>
+              <span className="font-mono text-[9.5px] text-steel">{pad(k + 1)}</span>
+              <h4 className="m-0 text-[13px] font-medium">{c.title}</h4>
             </div>
-            <p className="mt-[6px] mb-0 text-[10.5px] leading-[1.5] text-pretty text-black/80">
+            <p className="mt-[4px] mb-0 text-[10px] leading-[1.5] text-pretty text-black/80">
               {c.text}
             </p>
           </section>
@@ -309,7 +257,82 @@ export function ProjectDetailsPage({
           ))}
         </div>
       )}
-      <Folio n={n} side="right" className="text-steel" />
+      <Folio n={n} side="left" className="text-steel" />
+    </Page>
+  )
+}
+
+/**
+ * Right page of a project spread: up to three screens on the project's card color, one large
+ * and two side by side below. Each keeps its own shape, so no part of a screen is cut off.
+ */
+export function ProjectImagesPage({
+  project,
+  index,
+  qr,
+  t,
+  n,
+}: {
+  project: Project
+  index: number
+  /** Link to the project's page and its QR code as SVG markup */
+  qr: { url: string; svg: string }
+  t: T
+  n: number
+}) {
+  const theme = cardTheme(index)
+  const images = [
+    ...(project.screens ?? []).map((s) => mediaImage(s.desktop)),
+    mediaImage(project.coverImage),
+  ]
+    .filter((img) => img !== null)
+    .filter((img, k, all) => all.findIndex((o) => o.src === img.src) === k)
+    .slice(0, 3)
+
+  // The first screen full width, the next two side by side
+  const rows = images.length === 3 ? [[images[0]], [images[1], images[2]]] : images.map((i) => [i])
+
+  return (
+    <Page className={theme.bg}>
+      <div className="my-auto flex flex-col gap-[14px]">
+        {rows.map((row, r) => (
+          <div key={r} className="flex items-start gap-[14px]">
+            {row.map((img) => (
+              <div
+                key={img.src}
+                className={`relative min-w-0 flex-1 overflow-hidden rounded-[10px] ${theme.img} shadow-[0_14px_30px_-16px_rgba(0,0,0,.45)] print:shadow-none`}
+                style={{ aspectRatio: img.ratio ?? 16 / 10 }}
+              >
+                <Image
+                  src={img.src}
+                  alt=""
+                  fill
+                  sizes={row.length === 1 ? '900px' : '450px'}
+                  loading="eager"
+                  className="object-cover object-top"
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* Scan to open the project on the portfolio, centered at the foot of the page */}
+      <a
+        href={qr.url}
+        className={`mx-auto flex flex-col items-center gap-[10px] pt-[18px] text-center no-underline ${theme.ink}`}
+      >
+        <span className="block rounded-[8px] bg-white p-[7px] shadow-[0_10px_24px_-14px_rgba(0,0,0,.45)] print:shadow-none">
+          {/* SVG generated on the server by the qrcode package from our own URL */}
+          <span
+            aria-hidden
+            className="block size-[68px] [&>svg]:block [&>svg]:size-full"
+            dangerouslySetInnerHTML={{ __html: qr.svg }}
+          />
+        </span>
+        <span className="text-[11px] font-medium">{t.scan}</span>
+      </a>
+      <Folio n={n} side="right" className={theme.light ? 'text-steel' : 'text-mist/60'} />
     </Page>
   )
 }
@@ -360,10 +383,10 @@ function TechIcon({ tech }: { tech: Technology }) {
     return (
       <span
         aria-hidden
-        className="block size-[12px] bg-navy"
+        className="block size-[19px] shrink-0 bg-navy"
         style={{ mask: `url("${custom}") center / contain no-repeat` }}
       />
     )
   // eslint-disable-next-line @next/next/no-img-element -- fallback SVG from simpleicons.org
-  return <img src={techIconSrc(tech, '112a46')} alt="" className="block size-[12px]" />
+  return <img src={techIconSrc(tech, '112a46')} alt="" className="block size-[19px] shrink-0" />
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import QRCode from 'qrcode'
 
 import { Booklet } from '@/components/booklet/Booklet'
 import {
@@ -7,8 +8,8 @@ import {
   ContentsPage,
   CoverPage,
   IntroPage,
-  ProjectDetailsPage,
-  ProjectVisualPage,
+  ProjectImagesPage,
+  ProjectTextPage,
 } from '@/components/booklet/pages'
 import { PrintButton } from '@/components/booklet/PrintButton'
 import { Header } from '@/components/layout/Header'
@@ -35,8 +36,23 @@ export default async function BookletPage({ params }: PageProps<'/[locale]/proje
   const t = m.booklet
   const base = `/${locale}`
 
+  // Each images page carries a QR code to the project's page on the live site
+  const origin = siteOrigin()
+  const qr = await Promise.all(
+    projects.map(async (p) => {
+      const url = `${origin}${base}/projects/${p.slug}`
+      const svg = await QRCode.toString(url, {
+        type: 'svg',
+        margin: 0,
+        errorCorrectionLevel: 'M',
+        color: { dark: '#112a46', light: '#0000' },
+      })
+      return { url, svg }
+    }),
+  )
+
   // Order keeps every project on one spread: cover (right), intro | contents,
-  // then image page | details page per project, back cover alone on the left.
+  // then text page | images page per project, back cover alone on the left.
   // Page numbers count the cover as 1.
   const firstProjectPage = 4
   const pages = [
@@ -44,19 +60,21 @@ export default async function BookletPage({ params }: PageProps<'/[locale]/proje
     <IntroPage key="intro" site={site} t={t} n={2} />,
     <ContentsPage key="contents" projects={projects} firstPage={firstProjectPage} t={t} n={3} />,
     ...projects.flatMap((p, i) => [
-      <ProjectVisualPage
+      <ProjectTextPage
         key={`${p.id}-a`}
         project={p}
         index={i}
         total={projects.length}
         projectsT={m.projects}
+        projectT={m.project}
         t={t}
         n={firstProjectPage + i * 2}
       />,
-      <ProjectDetailsPage
+      <ProjectImagesPage
         key={`${p.id}-b`}
         project={p}
-        projectT={m.project}
+        index={i}
+        qr={qr[i]}
         t={t}
         n={firstProjectPage + i * 2 + 1}
       />,
@@ -64,7 +82,7 @@ export default async function BookletPage({ params }: PageProps<'/[locale]/proje
     <BackCoverPage
       key="back"
       site={site}
-      siteUrl={process.env.NEXT_PUBLIC_SITE_URL}
+      siteUrl={origin}
       tagline={m.footer.tagline}
       t={t}
     />,
@@ -101,4 +119,16 @@ export default async function BookletPage({ params }: PageProps<'/[locale]/proje
       </div>
     </>
   )
+}
+
+/** Where the printed QR codes lead, also when the booklet is saved from a local build. */
+const PRODUCTION_ORIGIN = 'https://portfolio.tschudea.de'
+
+/** The site's public origin: NEXT_PUBLIC_SITE_URL, unless unset or local. */
+function siteOrigin() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
+  if (!configured || /^https?:\/\/(localhost|127\.0\.0\.1)(:|$)/.test(configured)) {
+    return PRODUCTION_ORIGIN
+  }
+  return configured
 }
