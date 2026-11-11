@@ -658,6 +658,9 @@ function Leaf({
     }
     const lifted: CSSProperties = {
       filter: `drop-shadow(0 0 ${4 + 12 * s}px rgba(17,42,70,${0.32 * s}))`,
+      // The flap lies on top of the flat part. Turning back it is the front face, which comes
+      // first in the element tree, so the order has to be set explicitly.
+      zIndex: 1,
     }
     // The paper bends at the fold: dark in the crease, a soft highlight where it curves
     const crease = (
