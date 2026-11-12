@@ -84,6 +84,7 @@
     "navigation": "Navigation",
     "contact": "Contact",
     "imprint": "Imprint",
+    "styleguide": "Styleguide",
     "top": "Back to top",
     "rights": "All rights reserved."
   },
@@ -139,5 +140,11 @@
     "scan": "View the project online",
     "hint": "Click, drag a corner, swipe or use the arrow keys to turn pages",
     "description": "All projects by Andreas Tschuden as a booklet to flip through, also as a PDF to save."
+  },
+  "styleguide": {
+    "title": "Styleguide",
+    "description": "Corporate design: logo, colours, typography, grid and graphic elements.",
+    "intro": "How I look, on paper and on screen: logo, colours, typefaces and grid on three A4 pages. The guide itself is written in German.",
+    "download": "Save as PDF"
   }
 }

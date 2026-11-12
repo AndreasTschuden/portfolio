@@ -16,7 +16,7 @@ type Props = {
   nav: Messages['nav']
 }
 
-/** Tagline, navigation and contact columns, and a legal bar with the imprint link. */
+/** Tagline, navigation and contact columns, and a legal bar with the imprint and styleguide links. */
 export function Footer({ locale, site, t, nav }: Props) {
   const name = site.name ?? ''
   const home = `/${locale}`
@@ -96,6 +96,12 @@ export function Footer({ locale, site, t, nav }: Props) {
             className={`pb-[2px] text-navy no-underline hover:text-secondary ${hoverUnderline}`}
           >
             {t.imprint}
+          </Link>
+          <Link
+            href={`${home}/styleguide`}
+            className={`pb-[2px] text-navy no-underline hover:text-secondary ${hoverUnderline}`}
+          >
+            {t.styleguide}
           </Link>
           <button
             type="button"

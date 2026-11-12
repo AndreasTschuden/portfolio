@@ -84,6 +84,7 @@
     "navigation": "Navigation",
     "contact": "Kontakt",
     "imprint": "Impressum",
+    "styleguide": "Styleguide",
     "top": "Nach oben",
     "rights": "Alle Rechte vorbehalten."
   },
@@ -139,5 +140,11 @@
     "scan": "Projekt online ansehen",
     "hint": "Klicken, an der Ecke ziehen, wischen oder Pfeiltasten zum Blättern",
     "description": "Alle Projekte von Andreas Tschuden als blätterbares Heft, auch als PDF zum Speichern."
+  },
+  "styleguide": {
+    "title": "Styleguide",
+    "description": "Corporate Design: Logo, Farben, Typografie, Raster und grafische Elemente.",
+    "intro": "Wie ich aussehe, auf Papier und am Bildschirm: Logo, Farben, Schriften und Raster auf drei A4-Seiten.",
+    "download": "Als PDF speichern"
   }
 }
