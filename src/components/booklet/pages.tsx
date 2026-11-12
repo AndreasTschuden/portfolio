@@ -10,8 +10,10 @@ import type { Project, Technology } from '@/payload-types'
 import { Logo } from '../icons'
 
 /*
- * Booklet pages in A5 (148 × 210 mm). The viewer scales them on screen; printing
- * ("Save as PDF") lays them out one per sheet at their real size.
+ * Booklet pages in A4 (210 × 297 mm). They are laid out on an A5 grid (148 × 210 mm, the px
+ * values below) and zoomed by √2 onto the A4 sheet: both formats share the 1 : √2 ratio, so
+ * the layout stays the same and everything grows proportionally. The viewer scales them on
+ * screen; printing ("Save as PDF") lays them out one per sheet at their real size.
  */
 
 type T = Messages['booklet']
@@ -47,11 +49,17 @@ const Folio = ({
   </span>
 )
 
+/** A5 → A4: 297 / 210 = √2 (rounded up, so the zoomed page covers the whole sheet) */
+const A4_ZOOM = 297 / 210
+
 const Page = ({ className = '', children }: { className?: string; children: ReactNode }) => (
-  <div
-    className={`relative flex h-[210mm] w-[148mm] flex-col overflow-hidden px-[40px] pt-[40px] pb-[56px] font-sans ${className}`}
-  >
-    {children}
+  <div className="h-[297mm] w-[210mm] overflow-hidden">
+    <div
+      className={`relative flex h-[210mm] w-[148.5mm] flex-col overflow-hidden px-[40px] pt-[40px] pb-[56px] font-sans ${className}`}
+      style={{ zoom: A4_ZOOM }}
+    >
+      {children}
+    </div>
   </div>
 )
 
@@ -83,7 +91,7 @@ export function CoverPage({ projects, site, t }: { projects: Project[]; site: Si
                 src={c.src}
                 alt=""
                 fill
-                sizes="700px"
+                sizes="1000px"
                 loading="eager"
                 className="object-cover"
               />
@@ -307,7 +315,7 @@ export function ProjectImagesPage({
                   src={img.src}
                   alt=""
                   fill
-                  sizes={row.length === 1 ? '900px' : '450px'}
+                  sizes={row.length === 1 ? '1300px' : '650px'}
                   loading="eager"
                   className="object-cover object-top"
                 />

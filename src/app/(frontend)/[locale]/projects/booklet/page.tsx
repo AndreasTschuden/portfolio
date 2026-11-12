@@ -26,7 +26,7 @@ export async function generateMetadata({
   return { title: t.title.replace(/\.$/, ''), description: t.description }
 }
 
-/** All projects as a booklet to flip through; printing it gives an A5 PDF. */
+/** All projects as a booklet to flip through; printing it gives an A4 PDF. */
 export default async function BookletPage({ params }: PageProps<'/[locale]/projects/booklet'>) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
@@ -90,8 +90,8 @@ export default async function BookletPage({ params }: PageProps<'/[locale]/proje
 
   return (
     <>
-      {/* Only this route prints as A5 sheets without browser margins */}
-      <style>{'@page { size: A5 portrait; margin: 0; }'}</style>
+      {/* Only this route prints as A4 sheets without browser margins */}
+      <style>{'@page { size: A4 portrait; margin: 0; }'}</style>
 
       <div className="print:hidden">
         <Header locale={locale} t={m.nav} back={{ fallbackHref: `${base}/projects` }} />

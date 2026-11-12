@@ -6,11 +6,16 @@ import type { Messages } from '@/i18n'
 
 import { ArrowBack } from '../icons'
 
-// A5 at 96 dpi, the size the pages are laid out in
-const PAGE_W = (148 * 96) / 25.4
-const PAGE_H = (210 * 96) / 25.4
-/** Below this scale two pages get too small to read, so the viewer shows one page at a time. */
-const MIN_SPREAD_SCALE = 0.55
+// A4 at 96 dpi, the size of a page
+const PAGE_W = (210 * 96) / 25.4
+const PAGE_H = (297 * 96) / 25.4
+/**
+ * Below this scale two pages get too small to read, so the viewer shows one page at a time.
+ * (0.55 of the former A5 page; the content is the same, only zoomed by √2 onto A4.)
+ */
+const MIN_SPREAD_SCALE = 0.39
+/** Largest on-screen scale (1.3 of the former A5 page) */
+const MAX_SCALE = 0.92
 /** Duration of a full page turn started by click, key or button. */
 const TURN_MS = 1000
 /** Screen distance from a page corner in which the mouse lifts the corner. */
@@ -103,7 +108,7 @@ export function Booklet({ pages, t }: Props) {
       const two = Math.min(width / (2 * PAGE_W), height / PAGE_H) >= MIN_SPREAD_SCALE
       setSpread(two)
       settle()
-      setScale(Math.min(width / ((two ? 2 : 1) * PAGE_W), height / PAGE_H, 1.3))
+      setScale(Math.min(width / ((two ? 2 : 1) * PAGE_W), height / PAGE_H, MAX_SCALE))
     }
     measure()
     const observer = new ResizeObserver(measure)
